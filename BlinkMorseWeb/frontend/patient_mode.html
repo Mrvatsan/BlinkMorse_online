@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Mode - Blink Morse Web</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    
+    <!-- MediaPipe Face Mesh -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    
+    <!-- Modular Components -->
+    <script src="/js/faceMeshRenderer.js"></script>
+    <script src="/js/blinkDetector.js"></script>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="text-center mb-4">
+            <h1>🏥 Patient Mode</h1>
+            <p id="userInfo" style="font-size: 1.2rem; color: var(--text-light);"></p>
+        </div>
+        
+        <div class="patient-layout">
+            <!-- Left: Camera Feed & Controls -->
+            <div class="camera-section">
+                <!-- Status Panel -->
+                <div class="status-panel">
+                    <h3>Status</h3>
+                    <div id="statusIndicator" class="status-indicator status-idle">
+                        <span class="status-dot" style="background: var(--status-idle);"></span>
+                        <span id="statusText">Ready to start</span>
+                    </div>
+                </div>
+                
+                <!-- Video Feed -->
+                <div class="video-container">
+                    <video id="videoFeed" autoplay playsinline style="display: none;"></video>
+                    <canvas id="canvasOutput"></canvas>
+                    <div class="video-overlay">
+                        <div class="ear-display">
+                            EAR: <span id="earValue">--</span>
+                        </div>
+                        <div class="blink-feedback">
+                            <div class="output-label">Blinks Detected</div>
+                            <div id="blinkSymbols" class="morse-display">...</div>
+                        </div>
+                        <div class="morse-display">
+                            <div class="output-label">Current Pattern</div>
+                            <span id="morsePattern">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Output Panel -->
+                <div class="output-panel">
+                    <div class="output-label">Current Word</div>
+                    <div id="currentWord" class="output-text">--</div>
+                    
+                    <div class="output-label mt-3">Full Message</div>
+                    <div id="fullMessage" class="output-text">--</div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="control-panel">
+                    <button id="startBtn" class="btn btn-success">
+                        ▶️ Start Detection
+                    </button>
+                    <button id="resetBtn" class="btn btn-warning" disabled>
+                        🔄 Reset
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        ⏹️ Stop
+                    </button>
+                </div>
+                
+                <div class="control-panel">
+                    <button class="btn btn-primary" onclick="backToMenu()">
+                        ← Back to Menu
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right: Patient Commands Reference -->
+            <div class="morse-reference">
+                <h3>Quick Commands</h3>
+                <p class="text-light mb-3">
+                    Blink these patterns for instant communication
+                </p>
+                
+                <div id="commandsList">
+                    <!-- Populated by JavaScript -->
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio Element (hidden) -->
+    <audio id="audioPlayer" style="display: none;"></audio>
+    
+    <script src="/js/common.js"></script>
+    <script src="/js/patient_mode.js"></script>
+</body>
+</html>
