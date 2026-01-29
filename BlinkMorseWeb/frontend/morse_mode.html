@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Learning Mode - Blink Morse Web</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    
+    <!-- MediaPipe Face Mesh -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    
+    <!-- Modular Components -->
+    <script src="/js/faceMeshRenderer.js"></script>
+    <script src="/js/blinkDetector.js"></script>
+    <script src="/js/learnerModeController.js"></script>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="text-center mb-4">
+            <h1>📚 Morse Learning Mode</h1>
+            <p style="font-size: 1.2rem; color: var(--text-light);">
+                Learn Morse code by blinking - Practice makes perfect!
+            </p>
+        </div>
+        
+        <!-- Learner Layout -->
+        <div class="patient-layout">
+            <!-- Left: Camera Feed -->
+            <div class="camera-section">
+                <!-- Challenge Panel -->
+                <div class="challenge-panel" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                    <h2 style="color: white; margin-bottom: 1rem; text-align: center;">Practice Letter</h2>
+                    <div style="text-align: center;">
+                        <div id="targetLetter" style="font-size: 6rem; font-weight: bold; color: #00ff00; margin: 1rem 0;">A</div>
+                        <div style="font-size: 1.5rem; color: var(--text-light); margin-bottom: 0.5rem;">Morse Pattern:</div>
+                        <div id="targetPattern" style="font-size: 3rem; font-weight: bold; color: white; letter-spacing: 0.5rem;">. -</div>
+                    </div>
+                </div>
+                
+                <!-- Video Feed -->
+                <div class="video-container">
+                    <video id="videoFeed" autoplay playsinline style="display: none;"></video>
+                    <canvas id="canvasOutput"></canvas>
+                    <div class="video-overlay">
+                        <div class="ear-display">
+                            EAR: <span id="earValue">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Input Panel -->
+                <div class="output-panel" style="margin-top: 1.5rem;">
+                    <div class="output-label">Your Blink Input</div>
+                    <div id="userInput" style="font-size: 2.5rem; font-weight: bold; color: var(--accent-green); min-height: 60px; text-align: center; letter-spacing: 0.5rem;"></div>
+                    
+                    <div id="feedback" class="feedback-text" style="font-size: 1.5rem; margin-top: 1rem; text-align: center; font-weight: bold;">Blink the pattern!</div>
+                    
+                    <div id="score" style="font-size: 1.2rem; margin-top: 1rem; text-align: center; color: var(--text-light);">Score: 0/0 (0%)</div>
+                </div>
+            </div>
+            
+            <!-- Right: Controls & Info -->
+            <div class="info-section">
+                <!-- Controls -->
+            <!-- Right: Controls & Info -->
+            <div class="info-section">
+                <!-- Controls -->
+                <div class="control-panel">
+                    <h3>Controls</h3>
+                    <div class="control-buttons">
+                        <button id="startBtn" class="btn btn-primary btn-block">
+                            ▶ Start Learning
+                        </button>
+                        <button id="stopBtn" class="btn btn-secondary btn-block" disabled>
+                            ⏹ Stop
+                        </button>
+                        <button id="skipBtn" class="btn btn-secondary btn-block" disabled>
+                            ⏭ Skip Letter
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Timing Guide -->
+                <div class="timing-guide" style="margin-top: 2rem;">
+                    <h3 style="color: white; margin-bottom: 1rem;">⏱️ Blink Guide</h3>
+                    
+                    <div class="timing-item">
+                        <span class="timing-label">Dot (.)</span>
+                        <span class="timing-value">Quick blink < 0.4s</span>
+                    </div>
+                    
+                    <div class="timing-item">
+                        <span class="timing-label">Dash (-)</span>
+                        <span class="timing-value">Long blink ≥ 0.4s</span>
+                    </div>
+                    
+                    <div class="timing-item">
+                        <span class="timing-label">Submit</span>
+                        <span class="timing-value">Wait 1s after last blink</span>
+                    </div>
+                </div>
+                
+                <!-- Instructions -->
+                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                    <h3 style="color: white; margin-bottom: 1rem;">📖 How to Practice</h3>
+                    <ol style="color: var(--text-light); line-height: 1.8; padding-left: 1.5rem;">
+                        <li>Look at the target letter and pattern</li>
+                        <li>Blink the Morse pattern using your eyes</li>
+                        <li>Wait 1 second to submit</li>
+                        <li>Get instant feedback ✅ or ❌</li>
+                        <li>Practice until you master all letters!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="text-center mt-4">
+            <button class="btn btn-primary" onclick="backToMenu()">
+                ← Back to Menu
+            </button>
+        </div>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script src="/js/morse_mode.js"></script>
+</body>
+</html>
