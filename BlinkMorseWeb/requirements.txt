@@ -1,0 +1,23 @@
+# Web Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+websockets==12.0
+python-multipart==0.0.6
+
+# Computer Vision & AI
+opencv-python==4.9.0.80
+mediapipe==0.10.9
+numpy==1.24.3
+
+# NVIDIA Riva TTS
+nvidia-riva-client==2.14.0
+grpcio==1.60.0
+
+# Audio Processing
+pydub==0.25.1
+
+# Environment & Configuration
+python-dotenv==1.0.0
+
+# Utilities
+aiofiles==23.2.1
