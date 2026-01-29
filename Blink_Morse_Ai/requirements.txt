@@ -1,0 +1,6 @@
+opencv-python
+mediapipe
+numpy<2
+scipy
+pyttsx3
+nvidia-riva-client
