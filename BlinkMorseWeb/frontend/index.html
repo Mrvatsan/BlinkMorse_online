@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blink Morse Web - Login</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="page-wrapper fade-in">
+        <div class="login-container">
+            <h1>👁️ Blink Morse AI</h1>
+            <p style="font-size: 1.3rem; color: var(--primary-blue);">
+                Online Assistive Communication System
+            </p>
+            
+            <div class="login-form">
+                <h2>Welcome</h2>
+                <p>Enter your information to begin</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="userName" class="form-label">Name</label>
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            class="form-input" 
+                            placeholder="Enter your name"
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userRole" class="form-label">Role</label>
+                        <select id="userRole" class="form-select" required>
+                            <option value="">Select your role</option>
+                            <option value="patient">Patient</option>
+                            <option value="caregiver">Caregiver</option>
+                            <option value="user">General User</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-large mt-3">
+                        Continue →
+                    </button>
+                </form>
+            </div>
+            
+            <div class="mt-4" style="color: var(--text-light);">
+                <p>
+                    <strong>Privacy First:</strong> All processing is done locally.<br>
+                    No data is stored or transmitted except to NVIDIA TTS.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userName = document.getElementById('userName').value;
+            const userRole = document.getElementById('userRole').value;
+            
+            // Store user info in sessionStorage
+            sessionStorage.setItem('userName', userName);
+            sessionStorage.setItem('userRole', userRole);
+            
+            // Redirect to mode selection
+            window.location.href = '/mode_selection.html';
+        });
+    </script>
+</body>
+</html>
