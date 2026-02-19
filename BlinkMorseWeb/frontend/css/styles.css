@@ -910,6 +910,7 @@ p {
 }
 
 /* Instructions card */
+/* How-to-practice panel with white background and subtle shadow */
 .learner-instructions {
     background: var(--bg-white);
     padding: 1.25rem 1.5rem;
