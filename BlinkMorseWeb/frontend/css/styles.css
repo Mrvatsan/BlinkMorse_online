@@ -925,6 +925,7 @@ p {
 
 /* ============================================================================
    Normal Mode - Redesigned Layout (3-area grid)
+   Camera (top-left) | Output Card (right full-height) | Info (bottom-left)
    Top-left: Camera | Right: Output Card | Bottom-left: Controls + Guide
    ============================================================================ */
 .normal-layout {
