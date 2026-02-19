@@ -796,6 +796,7 @@ p {
     grid-area: practice;
     /* Practice card spans both rows on the right side */
     position: sticky;
+    /* Sticky positioning keeps the card visible while scrolling */
     top: 2rem;
     display: flex;
     flex-direction: column;
