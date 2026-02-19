@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Normal Morse Mode - Blink Morse Web</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    
+    <link rel="stylesheet" href="/css/styles.css?v=3">
+
     <!-- MediaPipe Face Mesh -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-    
+
     <!-- Modular Components -->
     <script src="/js/morseMapStandard.js"></script>
     <script src="/js/faceMeshRenderer.js"></script>
@@ -19,6 +22,7 @@
     <script src="/js/normalMorseDecoder.js"></script>
     <script src="/js/normalModeController.js"></script>
 </head>
+
 <body>
     <div class="container fade-in">
         <div class="text-center mb-4">
@@ -27,10 +31,11 @@
                 Free-form Morse communication for advanced users
             </p>
         </div>
-        
-        <div class="patient-layout">
-            <!-- Left: Camera Feed & Input Display -->
-            <div class="camera-section">
+
+        <div class="normal-layout">
+
+            <!-- TOP-LEFT: Camera Feed -->
+            <div class="normal-camera-area">
                 <!-- Status Panel -->
                 <div class="status-panel">
                     <h3>Status</h3>
@@ -39,7 +44,7 @@
                         <span id="statusText">Ready to start</span>
                     </div>
                 </div>
-                
+
                 <!-- Video Feed -->
                 <div class="video-container">
                     <video id="videoFeed" autoplay playsinline style="display: none;"></video>
@@ -58,67 +63,24 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Output Panel -->
+            </div>
+
+            <!-- RIGHT: Output Panel Card + Quick Reference (spans full height) -->
+            <div class="normal-output-card">
                 <div class="output-panel">
                     <div class="output-label">Current Letter</div>
                     <div id="currentLetter" class="output-text" style="font-size: 3rem;">--</div>
-                    
+
                     <div class="output-label mt-3">Decoded Text</div>
-                    <div id="decodedText" class="output-text" style="min-height: 80px; font-size: 1.8rem; line-height: 1.4; word-wrap: break-word;">--</div>
+                    <div id="decodedText" class="output-text"
+                        style="min-height: 80px; font-size: 1.8rem; line-height: 1.4; word-wrap: break-word;">--</div>
                 </div>
-            </div>
-            
-            <!-- Right: Controls & Reference -->
-            <div class="info-section">
-                <!-- Controls -->
-                <div class="control-panel">
-                    <h3>Controls</h3>
-                    <div class="control-buttons">
-                        <button id="startBtn" class="btn btn-primary btn-block">
-                            ▶ Start Detection
-                        </button>
-                        <button id="stopBtn" class="btn btn-secondary btn-block" disabled>
-                            ⏹ Stop
-                        </button>
-                        <button id="resetBtn" class="btn btn-secondary btn-block" disabled>
-                            🔄 Reset Text
-                        </button>
-                        <button id="speakBtn" class="btn btn-secondary btn-block" disabled>
-                            🔊 Speak Current Text
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Timing Guide -->
-                <div class="timing-guide">
-                    <h3 style="color: white; margin-bottom: 1rem;">⏱️ Timing Guide</h3>
-                    
-                    <div class="timing-item">
-                        <span class="timing-label">Dot (.)</span>
-                        <span class="timing-value">Quick blink < 0.4s</span>
-                    </div>
-                    
-                    <div class="timing-item">
-                        <span class="timing-label">Dash (-)</span>
-                        <span class="timing-value">Long blink ≥ 0.4s</span>
-                    </div>
-                    
-                    <div class="timing-item">
-                        <span class="timing-label">Letter End</span>
-                        <span class="timing-value">Pause 1.0s</span>
-                    </div>
-                    
-                    <div class="timing-item">
-                        <span class="timing-label">Word End</span>
-                        <span class="timing-value">Pause 2.5s</span>
-                    </div>
-                </div>
-                
+
                 <!-- Quick Reference -->
-                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
-                    <h3 style="color: white; margin-bottom: 1rem;">📖 Quick Reference</h3>
-                    <div style="color: var(--text-light); line-height: 1.8; font-size: 0.95rem; max-height: 250px; overflow-y: auto;">
+                <div class="normal-reference">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 0.75rem;">📖 Quick Reference</h3>
+                    <div
+                        style="color: var(--text-light); line-height: 1.8; font-size: 0.95rem; max-height: 250px; overflow-y: auto;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                             <div><strong>A</strong> .-</div>
                             <div><strong>N</strong> -.</div>
@@ -147,7 +109,7 @@
                             <div><strong>M</strong> --</div>
                             <div><strong>Z</strong> --..</div>
                         </div>
-                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                                 <div><strong>0</strong> -----</div>
                                 <div><strong>5</strong> .....</div>
@@ -164,8 +126,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- BOTTOM-LEFT: Controls + Timing Guide + Quick Reference -->
+            <div class="normal-info-area">
+                <!-- Controls -->
+                <div class="normal-controls">
+                    <button id="startBtn" class="btn btn-primary">
+                        ▶ Start Detection
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        ⏹ Stop
+                    </button>
+                    <button id="resetBtn" class="btn btn-warning" disabled>
+                        🔄 Reset Text
+                    </button>
+                    <button id="speakBtn" class="btn btn-success" disabled>
+                        🔊 Speak
+                    </button>
+                </div>
+
+                <!-- Timing Guide -->
+                <div class="timing-guide">
+                    <h3 style="color: white; margin-bottom: 0.75rem;">⏱️ Timing Guide</h3>
+                    <div class="timing-item">
+                        <span class="timing-label">Dot (.)</span>
+                        <span class="timing-value">Quick blink < 0.4s</span>
+                    </div>
+                    <div class="timing-item">
+                        <span class="timing-label">Dash (-)</span>
+                        <span class="timing-value">Long blink ≥ 0.4s</span>
+                    </div>
+                    <div class="timing-item">
+                        <span class="timing-label">Letter End</span>
+                        <span class="timing-value">Pause 1.0s</span>
+                    </div>
+                    <div class="timing-item">
+                        <span class="timing-label">Word End</span>
+                        <span class="timing-value">Pause 2.5s</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        
+
         <!-- Navigation -->
         <div class="text-center mt-4">
             <button class="btn btn-primary" onclick="backToMenu()">
@@ -173,8 +176,9 @@
             </button>
         </div>
     </div>
-    
+
     <script src="/js/common.js"></script>
     <script src="/js/normal_mode.js"></script>
 </body>
+
 </html>
