@@ -888,6 +888,7 @@ p {
 }
 
 /* Controls bar */
+/* Flex-wrap controls for responsive button layout */
 .learner-controls {
     display: flex;
     gap: 0.75rem;
