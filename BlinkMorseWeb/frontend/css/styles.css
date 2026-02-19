@@ -880,6 +880,7 @@ p {
 /* --- BOTTOM-LEFT: Controls + Blink Guide + Instructions --- */
 .learner-info-area {
     grid-area: info;
+    /* Info area positioned in bottom-left quadrant of the grid */
     display: flex;
     flex-direction: column;
     gap: 1rem;
