@@ -1010,6 +1010,7 @@ p {
 }
 
 /* Reference card */
+/* Quick reference table with scrollable A-Z and 0-9 morse codes */
 .normal-reference {
     background: var(--bg-white);
     padding: 1.25rem 1.5rem;
