@@ -754,6 +754,7 @@ p {
 
 /* ============================================================================
    Learner Mode - Redesigned Layout (3-area grid)
+   Camera (top-left) | Practice Card (right full-height) | Info (bottom-left)
    Top-left: Camera | Right: Practice Card | Bottom-left: Controls + Guide
    ============================================================================ */
 .learner-layout {
