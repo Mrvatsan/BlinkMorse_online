@@ -772,6 +772,7 @@ p {
 /* --- TOP-LEFT: Camera Feed --- */
 .learner-camera-area {
     grid-area: camera;
+    /* Camera feed positioned in top-left quadrant of the grid */
 }
 
 .learner-camera-area .video-container {
