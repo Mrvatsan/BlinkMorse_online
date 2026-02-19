@@ -967,6 +967,7 @@ p {
 /* --- RIGHT: Output Card (spans both rows) --- */
 .normal-output-card {
     grid-area: output;
+    /* Output card spans both rows on the right side */
     position: sticky;
     top: 2rem;
     display: flex;
