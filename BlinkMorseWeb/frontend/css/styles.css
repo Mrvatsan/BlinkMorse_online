@@ -464,7 +464,8 @@ p {
    Morse Reference List - Dark
    ============================================================================ */
 .morse-reference {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
     padding: 2rem;
     box-shadow: var(--shadow-md);
@@ -811,17 +812,15 @@ p {
     align-items: start;
 }
 
-/* --- TOP-LEFT: Camera Feed --- */
 .learner-camera-area {
     grid-area: camera;
-    /* Camera feed positioned in top-left quadrant of the grid */
 }
 
 .learner-camera-area .video-container {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    background: var(--bg-dark);
+    background: #0d0d1a;
 }
 
 .learner-camera-area #canvasOutput {
@@ -833,19 +832,15 @@ p {
     min-height: 340px;
 }
 
-/* --- RIGHT: Practice Letter Card (spans both rows) --- */
 .learner-practice-card {
     grid-area: practice;
-    /* Practice card spans both rows on the right side */
     position: sticky;
-    /* Sticky positioning keeps the card visible while scrolling */
     top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
-/* Challenge card: letter + pattern */
 .learner-challenge {
     background: linear-gradient(135deg, rgba(30, 60, 114, 0.6), rgba(42, 82, 152, 0.6));
     border: 1px solid rgba(0, 102, 204, 0.2);
@@ -857,7 +852,7 @@ p {
 
 .learner-challenge-title {
     color: rgba(255, 255, 255, 0.85);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
     text-transform: uppercase;
@@ -865,7 +860,7 @@ p {
 }
 
 .learner-target-letter {
-    font-size: 5.5rem;
+    font-size: 5rem;
     font-weight: 800;
     color: #00ff88;
     line-height: 1.1;
@@ -874,7 +869,7 @@ p {
 }
 
 .learner-pattern-label {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 0.2rem;
 }
@@ -887,9 +882,9 @@ p {
     font-family: 'Courier New', monospace;
 }
 
-/* Input/Output section below the challenge */
 .learner-io {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
     padding: 1.25rem 1.5rem;
     box-shadow: var(--shadow-md);
@@ -900,38 +895,35 @@ p {
 }
 
 .learner-user-input {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--accent-green);
     min-height: 50px;
     text-align: center;
     letter-spacing: 0.5rem;
     font-family: 'Courier New', monospace;
-    background: var(--bg-light);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
     border-radius: 8px;
     padding: 0.5rem 1rem;
     margin-top: 0.5rem;
 }
 
 .learner-score {
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-top: 0.75rem;
     text-align: center;
-    color: var(--text-light);
+    color: var(--text-secondary);
     font-weight: 600;
 }
 
-/* --- BOTTOM-LEFT: Controls + Blink Guide + Instructions --- */
 .learner-info-area {
     grid-area: info;
-    /* Info area positioned in bottom-left quadrant of the grid */
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-/* Controls bar */
-/* Flex-wrap controls for responsive button layout */
 .learner-controls {
     display: flex;
     gap: 0.75rem;
@@ -942,26 +934,23 @@ p {
     flex: 1;
     min-width: 100px;
     padding: 0.75rem 0.75rem;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     border-radius: 10px;
 }
 
-/* Timing guide in info area */
 .learner-info-area .timing-guide {
     margin-top: 0;
 }
 
-/* Instructions card */
-/* How-to-practice panel with white background and subtle shadow */
 .learner-instructions {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     padding: 1.25rem 1.5rem;
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 }
 
-/* Responsive: stack on smaller screens */
 @media (max-width: 1024px) {
     .learner-layout {
         grid-template-columns: 1fr;
@@ -974,8 +963,6 @@ p {
 
 /* ============================================================================
    Normal Mode - Redesigned Layout (3-area grid)
-   Camera (top-left) | Output Card (right full-height) | Info (bottom-left)
-   Top-left: Camera | Right: Output Card | Bottom-left: Controls + Guide
    ============================================================================ */
 .normal-layout {
     display: grid;
@@ -989,7 +976,6 @@ p {
     align-items: start;
 }
 
-/* --- TOP-LEFT: Camera Feed --- */
 .normal-camera-area {
     grid-area: camera;
 }
@@ -998,7 +984,7 @@ p {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    background: var(--bg-dark);
+    background: #0d0d1a;
 }
 
 .normal-camera-area #canvasOutput {
@@ -1010,10 +996,8 @@ p {
     min-height: 340px;
 }
 
-/* --- RIGHT: Output Card (spans both rows) --- */
 .normal-output-card {
     grid-area: output;
-    /* Output card spans both rows on the right side */
     position: sticky;
     top: 2rem;
     display: flex;
@@ -1025,7 +1009,6 @@ p {
     margin-top: 0;
 }
 
-/* --- BOTTOM-LEFT: Controls + Guide + Reference --- */
 .normal-info-area {
     grid-area: info;
     display: flex;
@@ -1033,7 +1016,6 @@ p {
     gap: 1rem;
 }
 
-/* Controls bar */
 .normal-controls {
     display: flex;
     gap: 0.75rem;
@@ -1044,26 +1026,23 @@ p {
     flex: 1;
     min-width: 100px;
     padding: 0.75rem 0.75rem;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     border-radius: 10px;
 }
 
-/* Timing guide in info area */
 .normal-info-area .timing-guide {
     margin-top: 0;
 }
 
-/* Reference card */
-/* Quick reference table with scrollable A-Z and 0-9 morse codes */
 .normal-reference {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     padding: 1.25rem 1.5rem;
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 }
 
-/* Responsive: stack on smaller screens */
 @media (max-width: 1024px) {
     .normal-layout {
         grid-template-columns: 1fr;
@@ -1072,4 +1051,26 @@ p {
             "output"
             "info";
     }
-}/* End of Blink Morse Web stylesheet - v3.0 layout redesign */
+}
+
+/* ============================================================================
+   Scrollbar Styling (Dark)
+   ============================================================================ */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* End of Blink Morse Web stylesheet - v4.0 dark theme */
