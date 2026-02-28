@@ -81,10 +81,10 @@ async def serve_normal_mode():
     """Serve normal morse mode page"""
     return FileResponse(f"{FRONTEND_DIR}/normal_mode.html")
 
-@app.get("/css/styles.css")
-async def serve_styles():
-    """Serve CSS styles"""
-    return FileResponse(f"{FRONTEND_DIR}/css/styles.css")
+@app.get("/css/{filename}")
+async def serve_css(filename: str):
+    """Serve CSS files"""
+    return FileResponse(f"{FRONTEND_DIR}/css/{filename}")
 
 @app.get("/js/{filename}")
 async def serve_javascript(filename: str):
