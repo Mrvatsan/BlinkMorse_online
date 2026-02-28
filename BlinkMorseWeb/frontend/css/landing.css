@@ -253,3 +253,131 @@ body.landing-page * {
 
 /* ============================================================================
    Section Base Styles
+   ============================================================================ */
+.section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 0.4rem 1.2rem;
+    background: rgba(0, 102, 204, 0.15);
+    border: 1px solid rgba(0, 102, 204, 0.3);
+    border-radius: 100px;
+    color: #3385D6;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.7;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+/* ============================================================================
+   About Section
+   ============================================================================ */
+.about-section {
+    padding: 100px 2rem;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 102, 204, 0.05) 50%, transparent 100%);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.about-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    transition: all 0.4s ease;
+}
+
+.about-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 200, 81, 0.3);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.about-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.about-card h3 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.about-card p {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   Features Section
+   ============================================================================ */
+.features-section {
+    padding: 100px 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    transition: all 0.4s ease;
+}
+
+.feature-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card-large {
+    grid-column: span 2;
+    border-color: rgba(0, 200, 81, 0.2);
+    background: linear-gradient(135deg, rgba(0, 200, 81, 0.08), rgba(0, 102, 204, 0.08));
+}
+
+.feature-card-large:hover {
+    border-color: rgba(0, 200, 81, 0.4);
+}
