@@ -1,10 +1,15 @@
 /* ============================================================================
    Blink Morse Web - Main Stylesheet
-   Vibrant, medical-assistive theme with accessibility focus
+   Dark theme with Space Grotesk font, unified with landing page aesthetic
    ============================================================================ */
 
 /* ============================================================================
-   CSS Variables - Color Palette
+   Import Font
+   ============================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================================
+   CSS Variables - Dark Color Palette
    ============================================================================ */
 :root {
     /* Primary Colors - Medical Blue & Vibrant Accents */
