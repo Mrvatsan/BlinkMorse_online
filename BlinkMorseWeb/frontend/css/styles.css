@@ -343,7 +343,8 @@ p {
 
 .video-container {
     position: relative;
-    background: var(--bg-dark);
+    background: #0d0d1a;
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
@@ -376,6 +377,7 @@ p {
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    color: var(--accent-green);
 }
 
 .blink-feedback {
