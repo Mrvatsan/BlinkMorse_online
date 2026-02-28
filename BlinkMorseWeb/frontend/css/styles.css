@@ -148,21 +148,22 @@ p {
 }
 
 /* ============================================================================
-   Buttons - Large & Accessible
+   Buttons - Dark Theme
    ============================================================================ */
 .btn {
     display: inline-block;
-    padding: 1rem 2.5rem;
-    font-size: 1.2rem;
+    padding: 0.85rem 2rem;
+    font-size: 1.05rem;
     font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
     text-align: center;
     text-decoration: none;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all var(--transition-normal);
     box-shadow: var(--shadow-sm);
-    min-width: 200px;
+    min-width: 160px;
 }
 
 .btn:hover {
@@ -180,7 +181,8 @@ p {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--primary-blue-dark), #003366);
+    background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));
+    box-shadow: 0 8px 25px rgba(51, 133, 214, 0.4);
 }
 
 .btn-success {
