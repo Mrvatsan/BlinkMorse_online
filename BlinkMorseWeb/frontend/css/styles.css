@@ -505,32 +505,34 @@ p {
 }
 
 /* ============================================================================
-   Text Output Display
+   Text Output Display - Dark
    ============================================================================ */
 .output-panel {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
-    padding: 2rem;
+    padding: 1.5rem;
     box-shadow: var(--shadow-md);
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .output-label {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-light);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
 }
 
 .output-text {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-blue);
+    color: var(--accent-green);
     min-height: 3rem;
-    padding: 1rem;
-    background: var(--bg-light);
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
     border-radius: 8px;
     word-wrap: break-word;
 }
