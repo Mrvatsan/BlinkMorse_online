@@ -10,7 +10,7 @@ from pydantic import BaseModel
 import asyncio
 import json
 import time
-import cv2
+# import cv2  # Removed to avoid crash
 import base64
 from typing import Optional
 
