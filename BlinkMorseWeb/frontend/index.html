@@ -1,76 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blink Morse Web - Login</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Blink Morse AI — Assistive Communication Through Eye Blinks</title>
+    <meta name="description"
+        content="An AI-powered assistive communication system that converts eye blinks into text and speech using Morse code patterns.">
+    <link rel="stylesheet" href="/css/styles.css?v=7">
+    <link rel="stylesheet" href="/css/landing.css?v=7">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 </head>
-<body>
-    <div class="page-wrapper fade-in">
-        <div class="login-container">
-            <h1>👁️ Blink Morse AI</h1>
-            <p style="font-size: 1.3rem; color: var(--primary-blue);">
-                Online Assistive Communication System
+
+<body class="landing-page">
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Custom Cursor (injected by JS) -->
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="landing-nav" id="navbar">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-logo">👁️ <span>BlinkMorse</span></a>
+            <div class="nav-links">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#login" class="nav-link nav-cta">Get Started →</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-section" id="hero">
+        <div class="hero-content reveal">
+            <div class="hero-badge">🚀 AI-Powered Assistive Technology</div>
+            <h1 class="hero-title">
+                Communicate with<br>
+                <span class="gradient-text">Just Your Eyes</span>
+            </h1>
+            <p class="hero-subtitle">
+                Blink Morse AI transforms eye blinks into Morse code, decodes them into text,
+                and speaks aloud — giving a voice to those who need it most.
             </p>
-            
-            <div class="login-form">
-                <h2>Welcome</h2>
-                <p>Enter your information to begin</p>
-                
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="userName" class="form-label">Name</label>
-                        <input 
-                            type="text" 
-                            id="userName" 
-                            class="form-input" 
-                            placeholder="Enter your name"
-                            required
-                            autocomplete="name"
-                        >
+            <div class="hero-actions">
+                <a href="#login" class="btn-hero-primary">Start Now →</a>
+                <a href="#features" class="btn-hero-secondary">Explore Features</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">A-Z</span>
+                    <span class="stat-label">Full Alphabet</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">0-9</span>
+                    <span class="stat-label">Numbers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">
+                        < 1s</span>
+                            <span class="stat-label">Decode Speed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Privacy-First</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section class="about-section" id="about">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-badge">About the Project</div>
+                <h2 class="section-title">Bridging Communication Gaps</h2>
+                <p class="section-subtitle">
+                    Blink Morse AI is a web-based assistive communication system designed for
+                    patients with speech impairments, caregivers, and anyone who needs
+                    an alternative way to communicate.
+                </p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card reveal">
+                    <div class="about-icon">🎯</div>
+                    <h3>The Problem</h3>
+                    <p>Millions of people with ALS, locked-in syndrome, or other conditions
+                        lose the ability to speak. Traditional AAC devices are expensive and complex.</p>
+                </div>
+                <div class="about-card reveal">
+                    <div class="about-icon">💡</div>
+                    <h3>Our Solution</h3>
+                    <p>Using just a webcam and a browser, patients can communicate by blinking
+                        Morse code patterns that are decoded into text and spoken aloud by AI.</p>
+                </div>
+                <div class="about-card reveal">
+                    <div class="about-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>All face detection and blink processing happens locally in your browser.
+                        No video data is ever uploaded or stored. Only decoded text is sent for speech synthesis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features-section" id="features">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-badge">Features</div>
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-subtitle">Three dedicated modes designed for different use cases and skill levels.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card feature-card-large reveal">
+                    <div class="feature-icon">🏥</div>
+                    <h3>Patient Mode</h3>
+                    <p>Simplified Morse patterns for quick communication of common needs — food, water, help, emergency,
+                        pain, and more.
+                        Designed for caregivers and clinical environments.</p>
+                    <div class="feature-tags">
+                        <span class="tag">Quick Commands</span>
+                        <span class="tag">Auto TTS</span>
+                        <span class="tag">SOS Alert</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="userRole" class="form-label">Role</label>
-                        <select id="userRole" class="form-select" required>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📡</div>
+                    <h3>Normal Morse Mode</h3>
+                    <p>Full A-Z and 0-9 Morse code support with a live helper that narrows down letters as you blink.
+                        Free-form text composition for advanced users.</p>
+                    <div class="feature-tags">
+                        <span class="tag">Live Helper</span>
+                        <span class="tag">Full Alphabet</span>
+                    </div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📚</div>
+                    <h3>Learning Mode</h3>
+                    <p>Practice Morse code letter by letter with real-time visual feedback and scoring.
+                        Perfect for beginners learning the system.</p>
+                    <div class="feature-tags">
+                        <span class="tag">Practice</span>
+                        <span class="tag">Scoring</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS SECTION ===== -->
+    <section class="how-section" id="how-it-works">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-badge">How It Works</div>
+                <h2 class="section-title">Simple. Intuitive. Powerful.</h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-number">01</div>
+                    <h3>Open Your Webcam</h3>
+                    <p>Allow browser camera access. All processing stays local.</p>
+                </div>
+                <div class="step-connector reveal">→</div>
+                <div class="step-card reveal">
+                    <div class="step-number">02</div>
+                    <h3>Blink Morse Code</h3>
+                    <p>Short blink = Dot. Long blink = Dash. Pause = Complete letter.</p>
+                </div>
+                <div class="step-connector reveal">→</div>
+                <div class="step-card reveal">
+                    <div class="step-number">03</div>
+                    <h3>AI Decodes & Speaks</h3>
+                    <p>Your blinks are decoded into text and spoken aloud using NVIDIA AI TTS.</p>
+                </div>
+            </div>
+            <div class="tech-strip reveal">
+                <span>Powered by:</span>
+                <div class="tech-logos">
+                    <span class="tech-badge">MediaPipe Face Mesh</span>
+                    <span class="tech-badge">NVIDIA Magpie-TTS</span>
+                    <span class="tech-badge">FastAPI</span>
+                    <span class="tech-badge">WebSocket</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== LOGIN / GET STARTED SECTION ===== -->
+    <section class="login-section" id="login">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-badge">Get Started</div>
+                <h2 class="section-title">Ready to Communicate?</h2>
+                <p class="section-subtitle">Enter your details below and choose a mode to begin.</p>
+            </div>
+            <div class="login-card reveal">
+                <form id="loginForm">
+                    <div class="form-group-landing">
+                        <label for="userName" class="form-label-landing">Your Name</label>
+                        <input type="text" id="userName" class="form-input-landing" placeholder="Enter your name"
+                            required autocomplete="name">
+                    </div>
+                    <div class="form-group-landing">
+                        <label for="userRole" class="form-label-landing">Your Role</label>
+                        <select id="userRole" class="form-input-landing" required>
                             <option value="">Select your role</option>
                             <option value="patient">Patient</option>
                             <option value="caregiver">Caregiver</option>
                             <option value="user">General User</option>
                         </select>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-large mt-3">
-                        Continue →
+                    <button type="submit" class="btn-login-submit">
+                        Continue to Dashboard →
                     </button>
                 </form>
             </div>
-            
-            <div class="mt-4" style="color: var(--text-light);">
-                <p>
-                    <strong>Privacy First:</strong> All processing is done locally.<br>
-                    No data is stored or transmitted except to NVIDIA TTS.
-                </p>
-            </div>
         </div>
-    </div>
-    
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="landing-footer">
+        <p>Built by Vatsan, An Assistive Communication &nbsp;|&nbsp; © 2026 Blink Morse AI</p>
+    </footer>
+
     <script>
         // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
             const userName = document.getElementById('userName').value;
             const userRole = document.getElementById('userRole').value;
-            
-            // Store user info in sessionStorage
             sessionStorage.setItem('userName', userName);
             sessionStorage.setItem('userRole', userRole);
-            
-            // Redirect to mode selection
             window.location.href = '/mode_selection.html';
         });
     </script>
+    <script src="/js/landing_fx.js?v=7"></script>
 </body>
+
 </html>
