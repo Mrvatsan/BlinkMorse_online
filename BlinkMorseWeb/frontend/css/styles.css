@@ -594,14 +594,15 @@ p {
 }
 
 /* ============================================================================
-   Timing Guide
+   Timing Guide - Dark
    ============================================================================ */
 .timing-guide {
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.2), rgba(0, 200, 81, 0.1));
+    border: 1px solid rgba(0, 102, 204, 0.2);
     color: white;
     border-radius: 16px;
-    padding: 2rem;
-    margin-top: 2rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
     box-shadow: var(--shadow-md);
 }
 
@@ -609,8 +610,8 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .timing-item:last-child {
@@ -618,14 +619,16 @@ p {
 }
 
 .timing-label {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .timing-value {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     font-family: 'Courier New', monospace;
+    color: var(--accent-green);
 }
 
 /* ============================================================================
