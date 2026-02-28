@@ -15,7 +15,7 @@ import base64
 from typing import Optional
 
 from backend.config import STATIC_AUDIO_DIR, FRONTEND_DIR
-from backend.services.blink_detection import BlinkDetector
+# from backend.services.blink_detection import BlinkDetector # Removed to avoid crash
 from backend.services.morse_decoder import MorseDecoder
 from backend.services.tts_magpie import get_tts_service
 from backend.utils.helpers import decode_base64_to_frame, encode_frame_to_base64
