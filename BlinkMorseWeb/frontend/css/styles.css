@@ -461,7 +461,7 @@ p {
 }
 
 /* ============================================================================
-   Morse Reference List
+   Morse Reference List - Dark
    ============================================================================ */
 .morse-reference {
     background: var(--bg-white);
@@ -476,13 +476,13 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
     transition: background var(--transition-fast);
 }
 
 .morse-item:hover {
-    background: var(--bg-light);
+    background: var(--bg-card-hover);
 }
 
 .morse-item:last-child {
@@ -490,17 +490,17 @@ p {
 }
 
 .morse-label {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: var(--primary-blue);
+    color: var(--accent-green);
     text-transform: uppercase;
 }
 
 .morse-pattern {
     font-family: 'Courier New', monospace;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--text-primary);
     letter-spacing: 0.3rem;
 }
 
