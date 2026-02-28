@@ -15,19 +15,19 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     
     print("=" * 60)
-    print("🎯 Blink Morse Web - Online Assistive AI System")
+    print("Blink Morse Web - Online Assistive AI System")
     print("=" * 60)
-    print(f"📡 Server starting on http://{host}:{port}")
-    print("📹 Make sure your webcam is connected")
-    print("🔑 NVIDIA API Key loaded from .env file")
+    print(f"Server starting on http://{host}:{port}")
+    print("Make sure your webcam is connected")
+    print("NVIDIA API Key loaded from .env file")
     print("=" * 60)
-    print("\n✨ Access the application at: http://localhost:8000\n")
+    print(f"\nAccess the application at: http://localhost:{port}\n")
     
     # Run the FastAPI application
     uvicorn.run(
         "backend.main:app",
         host=host,
         port=port,
-        reload=True,
+        reload=False,
         log_level="info"
     )
