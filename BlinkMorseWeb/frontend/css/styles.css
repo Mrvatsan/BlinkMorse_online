@@ -190,9 +190,17 @@ p {
     color: white;
 }
 
+.btn-success:hover {
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
 .btn-warning {
     background: linear-gradient(135deg, var(--accent-orange), #E67700);
     color: white;
+}
+
+.btn-warning:hover {
+    box-shadow: 0 8px 25px rgba(255, 136, 0, 0.4);
 }
 
 .btn-danger {
@@ -200,11 +208,15 @@ p {
     color: white;
 }
 
+.btn-danger:hover {
+    box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
+}
+
 .btn-large {
-    padding: 1.5rem 3rem;
-    font-size: 1.5rem;
-    min-width: 300px;
-    min-height: 80px;
+    padding: 1.25rem 2.5rem;
+    font-size: 1.3rem;
+    min-width: 280px;
+    min-height: 70px;
 }
 
 /* ============================================================================
