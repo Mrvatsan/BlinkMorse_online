@@ -847,7 +847,8 @@ p {
 
 /* Challenge card: letter + pattern */
 .learner-challenge {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.6), rgba(42, 82, 152, 0.6));
+    border: 1px solid rgba(0, 102, 204, 0.2);
     padding: 1.75rem 1.5rem 1.25rem;
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
