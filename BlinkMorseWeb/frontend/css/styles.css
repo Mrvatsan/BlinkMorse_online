@@ -277,7 +277,7 @@ p {
 }
 
 /* ============================================================================
-   Mode Selection
+   Mode Selection - Dark
    ============================================================================ */
 .mode-selection {
     text-align: center;
@@ -285,44 +285,46 @@ p {
 
 .mode-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
     margin-top: 3rem;
 }
 
 .mode-card {
-    background: var(--bg-white);
-    padding: 3rem 2rem;
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
     box-shadow: var(--shadow-md);
     text-align: center;
     transition: all var(--transition-normal);
     cursor: pointer;
-    border: 3px solid transparent;
 }
 
 .mode-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--primary-blue);
+    border-color: var(--accent-green);
+    background: var(--bg-card-hover);
 }
 
 .mode-icon {
-    font-size: 5rem;
+    font-size: 4rem;
     margin-bottom: 1rem;
 }
 
 .mode-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-blue);
-    margin-bottom: 1rem;
+    color: var(--text-white);
+    margin-bottom: 0.75rem;
 }
 
 .mode-description {
-    font-size: 1.1rem;
-    color: var(--text-light);
+    font-size: 1rem;
+    color: var(--text-secondary);
     margin-bottom: 1.5rem;
+    line-height: 1.6;
 }
 
 /* ============================================================================
