@@ -749,13 +749,14 @@ p {
    Learner Mode - Feedback Styles
    ============================================================================ */
 .feedback-text {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     text-align: center;
     margin-top: 1rem;
     padding: 1rem;
     border-radius: 8px;
     transition: all var(--transition-normal);
+    color: var(--text-primary);
 }
 
 .feedback-success {
@@ -768,18 +769,6 @@ p {
     color: var(--status-error) !important;
     background: rgba(255, 68, 68, 0.1);
     animation: shake 0.5s ease;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
 }
 
 @keyframes shake {
