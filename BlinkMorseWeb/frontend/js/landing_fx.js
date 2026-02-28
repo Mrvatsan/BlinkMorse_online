@@ -172,3 +172,17 @@ function initScrollReveal() {
     window.addEventListener('scroll', checkReveal);
     checkReveal(); // initial check
 }
+
+// ===== NAVBAR SCROLL EFFECT =====
+function initNavbarScroll() {
+    const navbar = document.getElementById('navbar');
+    if (!navbar) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+}
