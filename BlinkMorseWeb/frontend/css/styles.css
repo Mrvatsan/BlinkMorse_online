@@ -553,7 +553,7 @@ p {
 }
 
 /* ============================================================================
-   Morse Learning Mode
+   Morse Learning Mode Grid
    ============================================================================ */
 .morse-grid {
     display: grid;
@@ -563,33 +563,33 @@ p {
 }
 
 .morse-card {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     text-align: center;
     transition: all var(--transition-normal);
-    border: 2px solid transparent;
 }
 
 .morse-card:hover {
-    border-color: var(--primary-blue);
+    border-color: var(--accent-green);
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
 }
 
 .morse-letter {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    color: var(--primary-blue);
+    color: var(--accent-green);
     margin-bottom: 0.5rem;
 }
 
 .morse-code {
     font-family: 'Courier New', monospace;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--text-primary);
     letter-spacing: 0.2rem;
 }
 
