@@ -381,3 +381,135 @@ body.landing-page * {
 .feature-card-large:hover {
     border-color: rgba(0, 200, 81, 0.4);
 }
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.feature-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    background: rgba(0, 200, 81, 0.1);
+    border: 1px solid rgba(0, 200, 81, 0.25);
+    border-radius: 6px;
+    color: #00C851;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   How It Works Section
+   ============================================================================ */
+.how-section {
+    padding: 100px 2rem;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, transparent 0%, rgba(153, 51, 255, 0.05) 50%, transparent 100%);
+}
+
+.steps-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.step-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    flex: 1;
+    max-width: 300px;
+    transition: all 0.4s ease;
+}
+
+.step-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.step-number {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #00C851, #0066CC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.step-card h3 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.step-card p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.step-connector {
+    font-size: 2rem;
+    color: rgba(0, 200, 81, 0.4);
+    font-weight: 700;
+}
+
+.tech-strip {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tech-strip span {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.tech-logos {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.tech-badge {
+    padding: 0.4rem 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   Login Section
