@@ -399,44 +399,45 @@ p {
 }
 
 /* ============================================================================
-   Status Indicators
+   Status Indicators - Dark
    ============================================================================ */
 .status-panel {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 1.25rem;
     box-shadow: var(--shadow-md);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .status-indicator {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .status-idle {
-    background: #F8F9FA;
+    background: rgba(173, 181, 189, 0.1);
     color: var(--status-idle);
 }
 
 .status-decoding {
-    background: #FFF3CD;
-    color: #856404;
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffd54f;
 }
 
 .status-success {
-    background: #D4EDDA;
-    color: #155724;
+    background: rgba(0, 200, 81, 0.1);
+    color: var(--status-success);
 }
 
 .status-error {
-    background: #F8D7DA;
-    color: #721C24;
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--status-error);
 }
 
 .status-dot {
