@@ -651,7 +651,7 @@ p {
 
     .btn-large {
         min-width: 250px;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .morse-grid {
@@ -664,6 +664,10 @@ p {
    ============================================================================ */
 .text-center {
     text-align: center;
+}
+
+.text-light {
+    color: var(--text-secondary) !important;
 }
 
 .mt-1 {
