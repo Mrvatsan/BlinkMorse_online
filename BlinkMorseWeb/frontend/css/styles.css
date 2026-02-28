@@ -12,12 +12,12 @@
    CSS Variables - Dark Color Palette
    ============================================================================ */
 :root {
-    /* Primary Colors - Medical Blue & Vibrant Accents */
-    --primary-blue: #0066CC;
-    --primary-blue-dark: #004C99;
-    --primary-blue-light: #3385D6;
+    /* Primary Colors */
+    --primary-blue: #3385D6;
+    --primary-blue-dark: #0066CC;
+    --primary-blue-light: #5ca0e6;
 
-    /* Secondary Colors - Warm Accents */
+    /* Accent Colors */
     --accent-green: #00C851;
     --accent-orange: #FF8800;
     --accent-purple: #9933FF;
