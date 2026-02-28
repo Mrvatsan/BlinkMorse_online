@@ -153,3 +153,22 @@ function initCanvasBackground() {
     init();
     animate();
 }
+
+// ===== SCROLL REVEAL =====
+function initScrollReveal() {
+    const reveals = document.querySelectorAll('.reveal');
+
+    function checkReveal() {
+        const windowHeight = window.innerHeight;
+        reveals.forEach(el => {
+            const top = el.getBoundingClientRect().top;
+            const revealPoint = 120;
+            if (top < windowHeight - revealPoint) {
+                el.classList.add('visible');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', checkReveal);
+    checkReveal(); // initial check
+}
