@@ -220,7 +220,7 @@ p {
 }
 
 /* ============================================================================
-   Login Screen
+   Login Screen (now in landing.css, kept for fallback)
    ============================================================================ */
 .login-container {
     text-align: center;
@@ -228,7 +228,9 @@ p {
 }
 
 .login-form {
-    background: var(--bg-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(16px);
     padding: 3rem;
     border-radius: 20px;
     box-shadow: var(--shadow-lg);
