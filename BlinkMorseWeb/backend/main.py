@@ -207,183 +207,19 @@ async def get_patient_commands():
     })
 
 
-# ============================================================================
-# WebSocket Endpoint for Real-Time Blink Detection
-# ============================================================================
-
+# WebSocket Blink Detection logic commented out as it's no longer used in the new frontend approach
+"""
 class BlinkSession:
-    """Manages a single user's blink detection session"""
-    
-    def __init__(self, websocket: WebSocket, patient_mode: bool = False):
-        self.websocket = websocket
-        self.detector = BlinkDetector()
-        self.decoder = MorseDecoder()
-        self.decoder.set_patient_mode(patient_mode)
-        self.active = True
-        
-    async def send_status(self, status: str, data: dict = None):
-        """Send status update to client"""
-        message = {
-            "type": "status",
-            "status": status,
-            "timestamp": time.time()
-        }
-        if data:
-            message.update(data)
-        
-        await self.websocket.send_json(message)
-    
-    async def process_frame(self, frame_data: str):
-        """Process a video frame for blink detection"""
-        # Decode frame from base64
-        frame = decode_base64_to_frame(frame_data)
-        
-        if frame is None:
-            await self.send_status("error", {"error": "Invalid frame data"})
-            return
-        
-        # Detect blink
-        blink, ear, annotated_frame = self.detector.detect_blink(frame)
-        
-        # Check if eyes are closed (start blink)
-        if self.detector.is_eyes_closed(ear) and not self.decoder.is_blinking:
-            self.decoder.start_blink()
-        
-        # Check if eyes opened (end blink)
-        if not self.detector.is_eyes_closed(ear) and self.decoder.is_blinking:
-            blink_type = self.decoder.end_blink()
-            if blink_type:
-                await self.send_status("blink_detected", {
-                    "blink_type": blink_type,
-                    "morse_pattern": self.decoder.get_current_morse_pattern()
-                })
-        
-        # Check for letter/word timeouts
-        timeout_result = self.decoder.check_timeouts()
-        
-        if timeout_result['letter']:
-            await self.send_status("letter_decoded", {
-                "letter": timeout_result['letter'],
-                "current_word": self.decoder.get_current_word()
-            })
-        
-        if timeout_result['word']:
-            # Word complete - trigger TTS
-            word = timeout_result['word']
-            await self.send_status("word_complete", {
-                "word": word,
-                "full_text": self.decoder.get_decoded_text()
-            })
-            
-            # Generate speech
-            try:
-                tts = get_tts_service()
-                audio_base64 = tts.text_to_speech_base64(word)
-                
-                if audio_base64:
-                    await self.send_status("tts_ready", {
-                        "word": word,
-                        "audio": audio_base64
-                    })
-            except Exception as e:
-                await self.send_status("tts_error", {"error": str(e)})
-        
-        # Send current state
-        await self.websocket.send_json({
-            "type": "state",
-            "ear": round(ear, 3),
-            "morse_pattern": self.decoder.get_current_morse_pattern(),
-            "current_word": self.decoder.get_current_word(),
-            "decoded_text": self.decoder.get_decoded_text(),
-            "status": timeout_result['status'],
-            "annotated_frame": encode_frame_to_base64(annotated_frame)
-        })
-    
-    def cleanup(self):
-        """Clean up resources"""
-        self.detector.cleanup()
-        self.active = False
+    # ... (BlinkSession implementation)
+"""
 
 
+
+"""
 @app.websocket("/ws/blink")
 async def websocket_blink_detection(websocket: WebSocket):
-    """
-    WebSocket endpoint for real-time blink detection
-    
-    Client sends video frames, server responds with blink detection results
-    """
-    await websocket.accept()
-    
-    session = None
-    
-    try:
-        # Wait for initialization message
-        init_msg = await websocket.receive_json()
-        
-        if init_msg.get("type") != "init":
-            await websocket.send_json({
-                "type": "error",
-                "error": "Expected init message"
-            })
-            await websocket.close()
-            return
-        
-        # Create session
-        patient_mode = init_msg.get("patient_mode", False)
-        session = BlinkSession(websocket, patient_mode)
-        
-        await session.send_status("connected", {
-            "patient_mode": patient_mode,
-            "message": "Blink detection session started"
-        })
-        
-        # Main processing loop
-        while session.active:
-            try:
-                message = await websocket.receive_json()
-                
-                msg_type = message.get("type")
-                
-                if msg_type == "frame":
-                    # Process video frame
-                    frame_data = message.get("frame")
-                    await session.process_frame(frame_data)
-                
-                elif msg_type == "reset":
-                    # Reset decoder state
-                    session.decoder.reset()
-                    await session.send_status("reset", {
-                        "message": "Session reset"
-                    })
-                
-                elif msg_type == "ping":
-                    # Keep-alive ping
-                    await websocket.send_json({"type": "pong"})
-                
-                else:
-                    await session.send_status("error", {
-                        "error": f"Unknown message type: {msg_type}"
-                    })
-            
-            except WebSocketDisconnect:
-                break
-            
-            except Exception as e:
-                await session.send_status("error", {
-                    "error": str(e)
-                })
-    
-    except Exception as e:
-        print(f"WebSocket error: {e}")
-    
-    finally:
-        if session:
-            session.cleanup()
-        
-        try:
-            await websocket.close()
-        except:
-            pass
+    # ... (websocket_blink_detection implementation)
+"""
 
 
 # ============================================================================
@@ -394,19 +230,19 @@ async def websocket_blink_detection(websocket: WebSocket):
 async def startup_event():
     """Initialize services on startup"""
     print("\n" + "=" * 60)
-    print("🚀 Blink Morse Web - Starting Up")
+    print("Blink Morse Web - Starting Up")
     print("=" * 60)
     
     # Initialize TTS service
     try:
         tts = get_tts_service()
-        print("✅ NVIDIA Magpie-TTS service initialized")
+        print("NVIDIA Magpie-TTS service initialized")
     except Exception as e:
-        print(f"⚠️  TTS initialization warning: {e}")
+        print(f"TTS initialization warning: {e}")
         print("   Text-to-speech may not be available")
     
     print("=" * 60)
-    print("✨ Server ready for connections")
+    print("Server ready for connections")
     print("=" * 60 + "\n")
 
 
