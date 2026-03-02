@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Normal Morse Mode - Blink Morse Web</title>
-    <link rel="stylesheet" href="/css/styles.css?v=3">
-    <!-- Cache-busted CSS link to ensure latest layout styles load -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=7">
 
     <!-- MediaPipe Face Mesh -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -34,7 +35,7 @@
         </div>
 
         <div class="normal-layout">
-        <!-- Layout: CSS Grid with named areas (camera, output, info) -->
+            <!-- Layout: CSS Grid with named areas (camera, output, info) -->
 
             <!-- TOP-LEFT: Camera Feed -->
             <!-- Camera area with status panel and video feed -->
@@ -69,7 +70,7 @@
             </div>
 
             <!-- RIGHT: Output Panel Card + Quick Reference (spans full height) -->
-                    <!-- A-Z and 0-9 Morse code lookup table -->
+            <!-- A-Z and 0-9 Morse code lookup table -->
             <!-- Output card spans full right column for decoded text display -->
             <div class="normal-output-card">
                 <div class="output-panel">
@@ -78,114 +79,84 @@
                     <!-- Displays the most recently decoded Morse letter -->
 
                     <div class="output-label mt-3">Decoded Text</div>
-                    <div id="decodedText" class="output-text"
                     <!-- Full decoded text output with word wrapping -->
-                        style="min-height: 80px; font-size: 1.8rem; line-height: 1.4; word-wrap: break-word;">--</div>
-                </div>
-
-                <!-- Quick Reference -->
-                <div class="normal-reference">
-                    <h3 style="color: var(--primary-blue); margin-bottom: 0.75rem;">📖 Quick Reference</h3>
-                    <div
-                        style="color: var(--text-light); line-height: 1.8; font-size: 0.95rem; max-height: 250px; overflow-y: auto;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                            <div><strong>A</strong> .-</div>
-                            <div><strong>N</strong> -.</div>
-                            <div><strong>B</strong> -...</div>
-                            <div><strong>O</strong> ---</div>
-                            <div><strong>C</strong> -.-.</div>
-                            <div><strong>P</strong> .--.</div>
-                            <div><strong>D</strong> -..</div>
-                            <div><strong>Q</strong> --.-</div>
-                            <div><strong>E</strong> .</div>
-                            <div><strong>R</strong> .-.</div>
-                            <div><strong>F</strong> ..-.</div>
-                            <div><strong>S</strong> ...</div>
-                            <div><strong>G</strong> --.</div>
-                            <div><strong>T</strong> -</div>
-                            <div><strong>H</strong> ....</div>
-                            <div><strong>U</strong> ..-</div>
-                            <div><strong>I</strong> ..</div>
-                            <div><strong>V</strong> ...-</div>
-                            <div><strong>J</strong> .---</div>
-                            <div><strong>W</strong> .--</div>
-                            <div><strong>K</strong> -.-</div>
-                            <div><strong>X</strong> -..-</div>
-                            <div><strong>L</strong> .-..</div>
-                            <div><strong>Y</strong> -.--</div>
-                            <div><strong>M</strong> --</div>
-                            <div><strong>Z</strong> --..</div>
-                        </div>
-                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                <div><strong>0</strong> -----</div>
-                                <div><strong>5</strong> .....</div>
-                                <div><strong>1</strong> .----</div>
-                                <div><strong>6</strong> -....</div>
-                                <div><strong>2</strong> ..---</div>
-                                <div><strong>7</strong> --...</div>
-                                <div><strong>3</strong> ...--</div>
-                                <div><strong>8</strong> ---..</div>
-                                <div><strong>4</strong> ....-</div>
-                                <div><strong>9</strong> ----.</div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="decodedText" class="output-text"
+                        style="min-height: 120px; font-size: 2.2rem; line-height: 1.5; word-wrap: break-word; background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff; text-align: left;">
+                        Waiting for blinks...</div>
                 </div>
             </div>
 
-            <!-- BOTTOM-LEFT: Controls + Timing Guide + Quick Reference -->
-            <!-- Controls and timing guide in bottom-left grid area -->
-            <div class="normal-info-area">
-                <!-- Controls -->
-                <div class="normal-controls">
-                    <button id="startBtn" class="btn btn-primary">
-                        ▶ Start Detection
+            <!-- Quick Reference (Live Helper) -->
+            <div class="normal-reference"
+                style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3
+                    style="color: var(--primary-blue); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🎯 Live Helper</span>
+                    <span id="matchCount"
+                        style="font-size: 0.9rem; color: var(--text-light); font-weight: normal;"></span>
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.4;">
+                    Start blinking to see possible matching letters.
+                </p>
+                <div id="quickRefGrid"
+                    style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 220px; overflow-y: auto; align-content: flex-start; padding-right: 5px;">
+                    <!-- Items will be dynamically generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM-LEFT: Controls + Timing Guide + Quick Reference -->
+        <!-- Controls and timing guide in bottom-left grid area -->
+        <div class="normal-info-area">
+            <!-- Controls -->
+            <div class="normal-controls">
+                <button id="startBtn" class="btn btn-primary">
+                    ▶ Start Detection
                     <!-- Initiates face mesh and blink detection -->
-                    </button>
-                    <button id="stopBtn" class="btn btn-danger" disabled>
-                        ⏹ Stop
-                    </button>
-                    <button id="resetBtn" class="btn btn-warning" disabled>
-                        🔄 Reset Text
+                </button>
+                <button id="stopBtn" class="btn btn-danger" disabled>
+                    ⏹ Stop
+                </button>
+                <button id="resetBtn" class="btn btn-warning" disabled>
+                    🔄 Reset Text
                     <!-- Clears all decoded text and resets state -->
-                    </button>
-                    <button id="speakBtn" class="btn btn-success" disabled>
-                        🔊 Speak
+                </button>
+                <button id="speakBtn" class="btn btn-success" disabled>
+                    🔊 Speak
                     <!-- Uses Web Speech API to speak decoded text aloud -->
-                    </button>
-                </div>
-
-                <!-- Timing Guide -->
-                <div class="timing-guide">
-                    <h3 style="color: white; margin-bottom: 0.75rem;">⏱️ Timing Guide</h3>
-                    <div class="timing-item">
-                        <span class="timing-label">Dot (.)</span>
-                        <span class="timing-value">Quick blink < 0.4s</span>
-                    </div>
-                    <div class="timing-item">
-                        <span class="timing-label">Dash (-)</span>
-                        <span class="timing-value">Long blink ≥ 0.4s</span>
-                    </div>
-                    <div class="timing-item">
-                        <span class="timing-label">Letter End</span>
-                        <span class="timing-value">Pause 1.0s</span>
-                    </div>
-                    <div class="timing-item">
-                        <span class="timing-label">Word End</span>
-                        <span class="timing-value">Pause 2.5s</span>
-                    </div>
-                </div>
-
+                </button>
             </div>
-        </div>
 
-        <!-- Navigation -->
-        <div class="text-center mt-4">
-            <button class="btn btn-primary" onclick="backToMenu()">
-                ← Back to Menu
-            </button>
+            <!-- Timing Guide -->
+            <div class="timing-guide">
+                <h3 style="color: white; margin-bottom: 0.75rem;">⏱️ Timing Guide</h3>
+                <div class="timing-item">
+                    <span class="timing-label">Dot (.)</span>
+                    <span class="timing-value">Quick blink < 0.4s</span>
+                </div>
+                <div class="timing-item">
+                    <span class="timing-label">Dash (-)</span>
+                    <span class="timing-value">Long blink ≥ 0.4s</span>
+                </div>
+                <div class="timing-item">
+                    <span class="timing-label">Letter End</span>
+                    <span class="timing-value">Pause 1.0s</span>
+                </div>
+                <div class="timing-item">
+                    <span class="timing-label">Word End</span>
+                    <span class="timing-value">Pause 2.5s</span>
+                </div>
+            </div>
+
         </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="backToMenu()">
+            ← Back to Menu
+        </button>
+    </div>
     </div>
 
     <script src="/js/common.js"></script>

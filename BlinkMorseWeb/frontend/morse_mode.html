@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morse Learning Mode - Blink Morse Web</title>
-    <link rel="stylesheet" href="/css/styles.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=7">
 
     <!-- MediaPipe Face Mesh -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -31,11 +33,11 @@
         </div>
 
         <!-- Learner Layout: Camera top-left | Controls bottom-left | Practice Letter right -->
-    <!-- Layout: CSS Grid with named areas (camera, practice, info) -->
+        <!-- Layout: CSS Grid with named areas (camera, practice, info) -->
         <div class="learner-layout">
 
             <!-- TOP-LEFT: Camera Feed -->
-    <!-- Camera area occupies grid-area: camera (top-left quadrant) -->
+            <!-- Camera area occupies grid-area: camera (top-left quadrant) -->
             <div class="learner-camera-area">
                 <div class="video-container">
                     <video id="videoFeed" autoplay playsinline style="display: none;"></video>
@@ -49,7 +51,7 @@
             </div>
 
             <!-- RIGHT: Practice Letter Card (spans full height) -->
-    <!-- Practice card spans full right column via grid-area: practice -->
+            <!-- Practice card spans full right column via grid-area: practice -->
             <div class="learner-practice-card">
                 <div class="learner-challenge">
                     <h2 class="learner-challenge-title">Practice Letter</h2>
@@ -74,22 +76,22 @@
             </div>
 
             <!-- BOTTOM-LEFT: Controls + Blink Guide + Instructions -->
-                    <!-- Timing thresholds for dot, dash, and submit actions -->
-    <!-- Info area occupies grid-area: info (bottom-left quadrant) -->
+            <!-- Timing thresholds for dot, dash, and submit actions -->
+            <!-- Info area occupies grid-area: info (bottom-left quadrant) -->
             <div class="learner-info-area">
                 <!-- Controls -->
                 <div class="learner-controls">
                     <button id="startBtn" class="btn btn-primary">
                         ▶ Start Learning
-                    <!-- Initiates blink detection and learning session -->
+                        <!-- Initiates blink detection and learning session -->
                     </button>
                     <button id="stopBtn" class="btn btn-danger" disabled>
                         ⏹ Stop
-                    <!-- Stops active blink detection session -->
+                        <!-- Stops active blink detection session -->
                     </button>
                     <button id="skipBtn" class="btn btn-warning" disabled>
                         ⏭ Skip Letter
-                    <!-- Advances to next random letter in sequence -->
+                        <!-- Advances to next random letter in sequence -->
                     </button>
                 </div>
 
