@@ -356,3 +356,361 @@ p {
 
 #canvasOutput {
     width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    background: #000;
+    min-height: 480px;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    padding: 1.5rem;
+    color: white;
+}
+
+.ear-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent-green);
+}
+
+.blink-feedback {
+    margin: 1rem 0;
+}
+
+.blink-feedback .output-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.morse-display {
+    font-size: 1.8rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.3rem;
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
+/* ============================================================================
+   Status Indicators - Dark
+   ============================================================================ */
+.status-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.status-idle {
+    background: rgba(173, 181, 189, 0.1);
+    color: var(--status-idle);
+}
+
+.status-decoding {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffd54f;
+}
+
+.status-success {
+    background: rgba(0, 200, 81, 0.1);
+    color: var(--status-success);
+}
+
+.status-error {
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--status-error);
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ============================================================================
+   Morse Reference List - Dark
+   ============================================================================ */
+.morse-reference {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.morse-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--transition-fast);
+}
+
+.morse-item:hover {
+    background: var(--bg-card-hover);
+}
+
+.morse-item:last-child {
+    border-bottom: none;
+}
+
+.morse-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-green);
+    text-transform: uppercase;
+}
+
+.morse-pattern {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3rem;
+}
+
+/* ============================================================================
+   Text Output Display - Dark
+   ============================================================================ */
+.output-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    margin-top: 1.5rem;
+}
+
+.output-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.output-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    word-wrap: break-word;
+}
+
+/* ============================================================================
+   Control Panel - Dark
+   ============================================================================ */
+.control-panel {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.control-panel .btn {
+    flex: 1;
+    min-width: 140px;
+}
+
+/* ============================================================================
+   Morse Learning Mode Grid
+   ============================================================================ */
+.morse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.morse-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.morse-card:hover {
+    border-color: var(--accent-green);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.morse-letter {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 0.5rem;
+}
+
+.morse-code {
+    font-family: 'Courier New', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.2rem;
+}
+
+/* ============================================================================
+   Timing Guide - Dark
+   ============================================================================ */
+.timing-guide {
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.2), rgba(0, 200, 81, 0.1));
+    border: 1px solid rgba(0, 102, 204, 0.2);
+    color: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.timing-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timing-item:last-child {
+    border-bottom: none;
+}
+
+.timing-label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.timing-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: var(--accent-green);
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+@media (max-width: 1024px) {
+    .patient-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .mode-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .btn-large {
+        min-width: 250px;
+        font-size: 1.1rem;
+    }
+
+    .morse-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+.text-center {
+    text-align: center;
+}
+
+.text-light {
+    color: var(--text-secondary) !important;
+}
+
+.mt-1 {
+    margin-top: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.mt-3 {
+    margin-top: 1.5rem;
+}
+
+.mt-4 {
+    margin-top: 2rem;
+}
+
+.mb-1 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 2rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-slow);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
