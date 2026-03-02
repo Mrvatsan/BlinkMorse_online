@@ -714,3 +714,363 @@ p {
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   Loading Spinner
+   ============================================================================ */
+.spinner {
+    border: 4px solid var(--border-subtle);
+    border-top: 4px solid var(--accent-green);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   Learner Mode - Feedback Styles
+   ============================================================================ */
+.feedback-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all var(--transition-normal);
+    color: var(--text-primary);
+}
+
+.feedback-success {
+    color: var(--status-success) !important;
+    background: rgba(0, 200, 81, 0.1);
+    animation: pulse 0.5s ease;
+}
+
+.feedback-error {
+    color: var(--status-error) !important;
+    background: rgba(255, 68, 68, 0.1);
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.challenge-panel {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.6), rgba(42, 82, 152, 0.6));
+    border: 1px solid rgba(0, 102, 204, 0.2);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================================
+   Learner Mode - Redesigned Layout (3-area grid)
+   ============================================================================ */
+.learner-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "camera  practice"
+        "info    practice";
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.learner-camera-area {
+    grid-area: camera;
+}
+
+.learner-camera-area .video-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background: #0d0d1a;
+}
+
+.learner-camera-area #canvasOutput {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    background: #000;
+    min-height: 340px;
+}
+
+.learner-practice-card {
+    grid-area: practice;
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.learner-challenge {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.6), rgba(42, 82, 152, 0.6));
+    border: 1px solid rgba(0, 102, 204, 0.2);
+    padding: 1.75rem 1.5rem 1.25rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.learner-challenge-title {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.learner-target-letter {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #00ff88;
+    line-height: 1.1;
+    margin: 0.4rem 0;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+}
+
+.learner-pattern-label {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.2rem;
+}
+
+.learner-target-pattern {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.6rem;
+    font-family: 'Courier New', monospace;
+}
+
+.learner-io {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.learner-io-section {
+    margin-bottom: 0.75rem;
+}
+
+.learner-user-input {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    min-height: 50px;
+    text-align: center;
+    letter-spacing: 0.5rem;
+    font-family: 'Courier New', monospace;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+}
+
+.learner-score {
+    font-size: 1rem;
+    margin-top: 0.75rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.learner-info-area {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.learner-controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.learner-controls .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 10px;
+}
+
+.learner-info-area .timing-guide {
+    margin-top: 0;
+}
+
+.learner-instructions {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 1024px) {
+    .learner-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "camera"
+            "practice"
+            "info";
+    }
+}
+
+/* ============================================================================
+   Normal Mode - Redesigned Layout (3-area grid)
+   ============================================================================ */
+.normal-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "camera  output"
+        "info    output";
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.normal-camera-area {
+    grid-area: camera;
+}
+
+.normal-camera-area .video-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background: #0d0d1a;
+}
+
+.normal-camera-area #canvasOutput {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    background: #000;
+    min-height: 340px;
+}
+
+.normal-output-card {
+    grid-area: output;
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.normal-output-card .output-panel {
+    margin-top: 0;
+}
+
+.normal-info-area {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.normal-controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.normal-controls .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 10px;
+}
+
+.normal-info-area .timing-guide {
+    margin-top: 0;
+}
+
+.normal-reference {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 1024px) {
+    .normal-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "camera"
+            "output"
+            "info";
+    }
+}
+
+/* ============================================================================
+   Scrollbar Styling (Dark)
+   ============================================================================ */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* End of Blink Morse Web stylesheet - v4.0 dark theme */
