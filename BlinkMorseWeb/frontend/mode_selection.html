@@ -46,3 +46,52 @@
                 <!-- Normal Morse Mode -->
                 <div class="mode-card" onclick="selectMode('normal')">
                     <div class="mode-icon">📡</div>
+                    <div class="mode-title">Normal Morse Mode</div>
+                    <div class="mode-description">
+                        Free-form Morse communication for advanced users.
+                        Full A-Z alphabet, 0-9 numbers, unlimited expression.
+                    </div>
+                    <button class="btn btn-primary">
+                        Start Normal Mode
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button class="btn btn-warning" onclick="logout()">
+                    ← Back to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Display welcome message
+        const userName = sessionStorage.getItem('userName');
+        const userRole = sessionStorage.getItem('userRole');
+
+        if (!userName) {
+            window.location.href = '/';
+        } else {
+            document.getElementById('welcomeMessage').textContent =
+                `Welcome, ${userName}! (${userRole})`;
+        }
+
+        function selectMode(mode) {
+            if (mode === 'patient') {
+                window.location.href = '/patient_mode.html';
+            } else if (mode === 'learner') {
+                window.location.href = '/morse_mode.html';
+            } else if (mode === 'normal') {
+                window.location.href = '/normal_mode.html';
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
+</body>
+
+</html>
