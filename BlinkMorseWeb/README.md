@@ -123,6 +123,7 @@ BlinkMorseWeb/
 ## 🎨 UI Features
 
 - **Vibrant, Medical-Assistive Theme**: Clean, accessible colors
+- **Interactive Landing & Selection Unified Background**: A sleek, dark theme with an active, particle-simulated mesh background that reacts to the user's custom cursor
 - **Large Interactive Elements**: Easy for all users
 - **Real-time Visual Feedback**: Status indicators and animations
 - **Responsive Design**: Works on desktop and tablet
