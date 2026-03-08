@@ -71,6 +71,11 @@ body {
     line-height: 1.6;
     min-height: 100vh;
     overflow-x: hidden;
+    cursor: none;
+}
+
+* {
+    cursor: none;
 }
 
 /* ============================================================================
@@ -798,6 +803,45 @@ p {
     border-radius: 12px;
     margin-bottom: 1.5rem;
     box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================================
+   Custom Cursor (All Modes)
+   ============================================================================ */
+.custom-cursor {
+    position: fixed;
+    top: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 200, 81, 0.6);
+    mix-blend-mode: screen;
+}
+
+.custom-cursor-ring {
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(0, 200, 81, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+    transition: width 0.25s, height 0.25s, background-color 0.2s, opacity 0.3s ease;
+}
+
+.custom-cursor-ring.active {
+    width: 55px;
+    height: 55px;
+    background-color: rgba(0, 200, 81, 0.08);
 }
 
 /* ============================================================================
