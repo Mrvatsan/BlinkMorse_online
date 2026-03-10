@@ -11,6 +11,7 @@ from backend.config import (
     WORD_PAUSE,
     PATIENT_COMMANDS
 )
+from backend.services.commands_manager import CommandsManager
 
 
 class MorseDecoder:
@@ -137,9 +138,10 @@ class MorseDecoder:
         Returns:
             Optional[str]: Decoded character/command or None
         """
-        # PATIENT MODE: Use simplified mapping only
+        # PATIENT MODE: Use persistent mapping
         if self.patient_mode:
-            result = self.PATIENT_MORSE_MAP.get(pattern, None)
+            patient_map = CommandsManager.get_commands()
+            result = patient_map.get(pattern, None)
             if result is None:
                 print(f"[Patient Mode] Pattern not recognized: {pattern}")
             return result
@@ -185,9 +187,6 @@ class MorseDecoder:
     @staticmethod
     def get_patient_commands() -> Dict[str, str]:
         """
-        Get patient mode simplified commands
-        
-        Returns:
-            Dict mapping command names to Morse patterns
+        Get patient mode commands dynamically
         """
-        return MorseDecoder.PATIENT_MORSE_MAP.copy()
+        return CommandsManager.get_commands()

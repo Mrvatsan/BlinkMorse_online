@@ -17,7 +17,8 @@ from typing import Optional
 from backend.config import STATIC_AUDIO_DIR, FRONTEND_DIR
 # from backend.services.blink_detection import BlinkDetector # Removed to avoid crash
 from backend.services.morse_decoder import MorseDecoder
-from backend.services.tts_magpie import get_tts_service
+from backend.services.tts_kokoro import get_tts_service
+from backend.services.commands_manager import CommandsManager
 # from backend.utils.helpers import decode_base64_to_frame, encode_frame_to_base64 # Removed to avoid crash
 
 # Initialize FastAPI app
@@ -50,6 +51,9 @@ class TTSRequest(BaseModel):
 class UserLoginRequest(BaseModel):
     name: str
     role: str
+
+class CommandsUpdateRequest(BaseModel):
+    commands: dict
 
 
 # ============================================================================
@@ -195,16 +199,30 @@ async def get_morse_reference():
 @app.get("/api/patient_commands")
 async def get_patient_commands():
     """
-    Get patient mode quick commands
-    
-    Returns:
-        JSONResponse with patient command mappings
+    Get patient mode dict
     """
-    commands = MorseDecoder.get_patient_commands()
+    commands = CommandsManager.get_commands()
     return JSONResponse({
         "success": True,
         "commands": commands
     })
+
+@app.post("/api/patient_commands")
+async def update_patient_commands(request: CommandsUpdateRequest):
+    """
+    Update patient mode quick commands
+    """
+    success = CommandsManager.save_commands(request.commands)
+    if success:
+        return JSONResponse({
+            "success": True,
+            "message": "Commands updated successfully"
+        })
+    else:
+        return JSONResponse({
+            "success": False,
+            "error": "Failed to save commands"
+        }, status_code=500)
 
 
 # WebSocket Blink Detection logic commented out as it's no longer used in the new frontend approach

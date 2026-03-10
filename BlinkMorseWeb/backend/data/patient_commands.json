@@ -1,0 +1,10 @@
+{
+    ".": "YES",
+    ".-": "NO",
+    "...": "WATER",
+    "-.": "PAIN",
+    "..--": "EMERGENCY",
+    "---": "FAMILY",
+    "..": "BATHROOM",
+    "....": "HELLO WORLD"
+}

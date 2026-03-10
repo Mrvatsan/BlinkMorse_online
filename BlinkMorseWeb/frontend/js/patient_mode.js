@@ -17,6 +17,7 @@ let blinkDetector = null;
 let wsManager = null;
 let isDetecting = false;
 let blinkSymbolsBuffer = [];
+let lastAudioData = null; // Cache the latest speech for replay
 
 // Timing for letter/word detection
 let lastBlinkEndTime = null;
@@ -30,6 +31,7 @@ let currentMorsePattern = '';
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const resetBtn = document.getElementById('resetBtn');
+const repeatBtn = document.getElementById('repeatBtn');
 const videoElement = document.getElementById('videoFeed');
 const canvasElement = document.getElementById('canvasOutput');
 const earValue = document.getElementById('earValue');
@@ -43,22 +45,22 @@ const fullMessage = document.getElementById('fullMessage');
  */
 function handleBlinkDetected(blinkEvent) {
     const { symbol, type, duration } = blinkEvent;
-    
+
     // Add to pattern
     currentMorsePattern += symbol;
     blinkSymbolsBuffer.push(symbol);
     lastBlinkEndTime = blinkEvent.timestamp;
-    
+
     // Update UI
     blinkSymbols.textContent = blinkSymbolsBuffer.join(' ');
     morsePattern.textContent = currentMorsePattern || '--';
-    
+
     // Flash effect
     blinkSymbols.style.color = '#00ff00';
     setTimeout(() => {
         blinkSymbols.style.color = 'var(--accent-green)';
     }, 200);
-    
+
     updateStatus(`Blink: ${type}`, 'decoding');
 }
 
@@ -76,9 +78,9 @@ function checkForPauses() {
     if (!blinkDetector || !lastBlinkEndTime || currentMorsePattern.length === 0) {
         return;
     }
-    
+
     const timeSinceLastBlink = blinkDetector.getTimeSinceLastBlink();
-    
+
     // Word pause
     if (timeSinceLastBlink >= WORD_PAUSE) {
         decodeAndSpeak(currentMorsePattern, true);
@@ -112,25 +114,28 @@ async function decodeAndSpeak(pattern, isWord) {
                 patient_mode: true
             })
         });
-        
+
         if (response.success) {
             const decoded = response.decoded;
             console.log(`[Decode] ${pattern} → ${decoded}`);
-            
+
             currentWord.textContent = decoded;
             updateStatus(`Decoded: ${decoded}`, 'success');
-            
-            if (isWord) {
-                // Trigger TTS
-                const ttsResponse = await fetchAPI('/api/tts', {
-                    method: 'POST',
-                    body: JSON.stringify({ text: decoded })
-                });
-                
-                if (ttsResponse.success && ttsResponse.audio) {
-                    playAudioBase64(ttsResponse.audio);
-                    fullMessage.textContent = (fullMessage.textContent === '--' ? '' : fullMessage.textContent) + decoded + ' ';
-                    currentWord.textContent = '--';
+
+            // Trigger TTS
+            const ttsResponse = await fetchAPI('/api/tts', {
+                method: 'POST',
+                body: JSON.stringify({ text: decoded })
+            });
+
+            if (ttsResponse.success && ttsResponse.audio) {
+                lastAudioData = ttsResponse.audio;
+                playAudioBase64(lastAudioData);
+                fullMessage.textContent = (fullMessage.textContent === '--' ? '' : fullMessage.textContent) + decoded + ' ';
+                currentWord.textContent = '--';
+
+                if (isDetecting) {
+                    repeatBtn.disabled = false;
                 }
             }
         } else {
@@ -152,7 +157,7 @@ async function decodeAndSpeak(pattern, isWord) {
  */
 function onFaceMeshResults(results) {
     if (!isDetecting) return;
-    
+
     // Render full 468-point face mesh
     const renderResult = renderer.render(results, {
         showFullMesh: true,          // Show complete face mesh
@@ -162,12 +167,12 @@ function onFaceMeshResults(results) {
         eyeColor: '#00FF00',         // Green eye landmarks
         eyePointSize: 3
     });
-    
+
     // Process landmarks for blink detection
     if (renderResult.detected && renderResult.landmarks) {
         blinkDetector.processFaceLandmarks(renderResult.landmarks);
     }
-    
+
     // Check for letter/word pauses
     checkForPauses();
 }
@@ -184,12 +189,12 @@ async function init() {
     try {
         // Load patient commands reference
         await loadPatientCommands();
-        
+
         // Setup event listeners
         setupEventListeners();
-        
+
         updateStatus('Ready to start', 'idle');
-        
+
     } catch (error) {
         console.error('Initialization error:', error);
         updateStatus('Initialization failed', 'error');
@@ -202,14 +207,14 @@ async function init() {
 async function loadPatientCommands() {
     try {
         const response = await fetchAPI('/api/patient_commands');
-        
+
         if (response.success) {
             displayPatientCommands(response.commands);
         }
-        
+
     } catch (error) {
         console.error('Error loading commands:', error);
-        document.getElementById('commandsList').innerHTML = 
+        document.getElementById('commandsList').innerHTML =
             '<p class="text-danger">Failed to load commands</p>';
     }
 }
@@ -220,7 +225,7 @@ async function loadPatientCommands() {
 function displayPatientCommands(commands) {
     const container = document.getElementById('commandsList');
     container.innerHTML = '';
-    
+
     const commandLabels = {
         '.': 'YES',
         '.-': 'NO',
@@ -230,7 +235,7 @@ function displayPatientCommands(commands) {
         '---': 'FAMILY',
         '..': 'BATHROOM'
     };
-    
+
     for (const [pattern, command] of Object.entries(commands)) {
         const item = document.createElement('div');
         item.className = 'morse-item';
@@ -249,6 +254,12 @@ function setupEventListeners() {
     startBtn.addEventListener('click', startDetection);
     stopBtn.addEventListener('click', stopDetection);
     resetBtn.addEventListener('click', resetSession);
+    repeatBtn.addEventListener('click', () => {
+        if (lastAudioData) {
+            playAudioBase64(lastAudioData);
+            updateStatus('Repeating speech', 'success');
+        }
+    });
 }
 
 /**
@@ -257,10 +268,10 @@ function setupEventListeners() {
 async function startDetection() {
     try {
         updateStatus('Starting camera...', 'decoding');
-        
+
         // Initialize renderer
         renderer = new FaceMeshRenderer(canvasElement);
-        
+
         // Initialize blink detector
         blinkDetector = new BlinkDetector({
             earThreshold: 0.21,
@@ -269,28 +280,28 @@ async function startDetection() {
             onBlinkDetected: handleBlinkDetected,
             onEARUpdate: handleEARUpdate
         });
-        
+
         // Check if MediaPipe is loaded
         if (typeof FaceMesh === 'undefined') {
             throw new Error('MediaPipe Face Mesh not loaded. Check internet connection.');
         }
-        
+
         // Initialize MediaPipe Face Mesh
         faceMesh = new FaceMesh({
             locateFile: (file) => {
                 return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
             }
         });
-        
+
         faceMesh.setOptions({
             maxNumFaces: 1,
             refineLandmarks: true,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5
         });
-        
+
         faceMesh.onResults(onFaceMeshResults);
-        
+
         // Initialize camera
         camera = new Camera(videoElement, {
             onFrame: async () => {
@@ -301,32 +312,33 @@ async function startDetection() {
             width: 1280,
             height: 720
         });
-        
+
         // Start camera
         await camera.start();
-        
+
         // Set canvas size to match video
         canvasElement.width = 1280;
         canvasElement.height = 720;
-        
+
         // Start detection
         isDetecting = true;
-        
+
         // Clear previous data
         blinkSymbolsBuffer = [];
         blinkSymbols.textContent = '...';
         currentMorsePattern = '';
         morsePattern.textContent = '--';
         blinkDetector.reset();
-        
+
         // Update UI
         startBtn.disabled = true;
         stopBtn.disabled = false;
         resetBtn.disabled = false;
-        
+        repeatBtn.disabled = !lastAudioData;
+
         updateStatus('Detecting blinks...', 'success');
         console.log('[Camera] Started successfully with FULL MediaPipe Face Mesh (468 landmarks)');
-        
+
     } catch (error) {
         console.error('Error starting detection:', error);
         updateStatus('Failed to start: ' + error.message, 'error');
@@ -339,37 +351,38 @@ async function startDetection() {
  */
 function stopDetection() {
     isDetecting = false;
-    
+
     // Stop camera
     if (camera) {
         camera.stop();
         camera = null;
     }
-    
+
     // Clear face mesh
     if (faceMesh) {
         faceMesh.close();
         faceMesh = null;
     }
-    
+
     // Clear canvas
     if (renderer) {
         renderer.clear();
     }
-    
+
     // Clear buffers
     blinkSymbolsBuffer = [];
     currentMorsePattern = '';
-    
+
     // Reset UI
     startBtn.disabled = false;
     stopBtn.disabled = true;
     resetBtn.disabled = true;
-    
+    repeatBtn.disabled = true;
+
     earValue.textContent = '--';
     blinkSymbols.textContent = '...';
     morsePattern.textContent = '--';
-    
+
     updateStatus('Stopped', 'idle');
     console.log('[Camera] Stopped');
 }
@@ -384,7 +397,7 @@ function resetSession() {
     blinkSymbolsBuffer = [];
     blinkSymbols.textContent = '...';
     currentMorsePattern = '';
-    
+
     updateStatus('Session reset', 'idle');
     console.log('[Session] Reset');
 }
