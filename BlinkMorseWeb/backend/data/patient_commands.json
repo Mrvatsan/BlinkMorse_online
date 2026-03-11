@@ -5,6 +5,9 @@
     "-.": "PAIN",
     "..--": "EMERGENCY",
     "---": "FAMILY",
-    "..": "BATHROOM",
-    "....": "HELLO WORLD"
+    "....": "HELLO WORLD",
+    "..": "RESTROOM",
+    "..-..": "NALLA IRUKIYA",
+    ".-.-": "TESTING",
+    "-.-.-.": "ACTION"
 }
