@@ -127,11 +127,12 @@
                 <!-- Filled via JS -->
             </div>
 
-            <div class="add-command-form d-flex gap-2">
-                <input type="text" id="newCommandPattern" class="form-control" placeholder="Pattern (e.g. .-)"
-                    style="max-width: 150px;">
-                <input type="text" id="newCommandText" class="form-control" placeholder="Action (e.g. HELP)">
-                <button class="btn btn-primary" onclick="addNewCommand()">Add</button>
+            <div class="add-command-form d-flex gap-2 align-items-center" style="flex-wrap: nowrap;">
+                <input type="text" id="newCommandPattern" class="form-input" placeholder="Pattern (e.g. .-)"
+                    style="flex: 1; min-width: 0;">
+                <input type="text" id="newCommandText" class="form-input" placeholder="Action (e.g. HELP)"
+                    style="flex: 1; min-width: 0;">
+                <button class="btn btn-primary" onclick="addNewCommand()" style="white-space: nowrap;">Add</button>
             </div>
 
             <div class="mt-4 text-end border-top border-secondary pt-3">
