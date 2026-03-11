@@ -86,14 +86,14 @@ function addNewCommand() {
     const patternInput = document.getElementById('newCommandPattern').value.trim();
 
     if (!textInput || !patternInput) {
-        alert("Please enter both text and a Morse pattern.");
+        showNotification("Please enter both text and a Morse pattern.", "warning");
         return;
     }
 
     // basic validation for morse pattern (only dots and dashes)
     const validPattern = /^[.-]+$/.test(patternInput);
     if (!validPattern) {
-        alert("Pattern must contain only dots '.' and dashes '-'");
+        showNotification("Pattern must contain only dots '.' and dashes '-'", "warning");
         return;
     }
 
@@ -126,13 +126,13 @@ async function saveCommands() {
             if (typeof loadPatientCommands === 'function') {
                 await loadPatientCommands();
             }
-            alert('Commands saved successfully!');
+            showNotification('Commands saved successfully!', 'success');
         } else {
-            alert('Failed to save commands.');
+            showNotification('Failed to save commands.', 'error');
         }
     } catch (error) {
         console.error('Error saving commands', error);
-        alert('An error occurred while saving.');
+        showNotification('An error occurred while saving.', 'error');
     } finally {
         const saveBtn = document.getElementById('saveCommandsBtn');
         saveBtn.disabled = false;
