@@ -1101,6 +1101,70 @@ p {
 }
 
 /* ============================================================================
+   Toast Notifications (Custom UI)
+   ============================================================================ */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    color: var(--text-white);
+    font-size: 1.05rem;
+    font-weight: 500;
+    min-width: 280px;
+    max-width: 350px;
+    pointer-events: auto;
+    transition: all var(--transition-normal);
+}
+
+.toast-icon {
+    font-size: 1.4rem;
+    margin-right: 0.75rem;
+}
+
+.toast-message {
+    flex-grow: 1;
+}
+
+.toast-success {
+    border-left: 4px solid var(--status-success);
+}
+
+.toast-error {
+    border-left: 4px solid var(--status-error);
+}
+
+.toast-warning {
+    border-left: 4px solid #FFC107;
+}
+
+.toast-info {
+    border-left: 4px solid var(--primary-blue-light);
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* ============================================================================
    Scrollbar Styling (Dark)
    ============================================================================ */
 ::-webkit-scrollbar {
