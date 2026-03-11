@@ -50,11 +50,42 @@ function displayUserInfo(elementId) {
  * Show notification toast
  */
 function showNotification(message, type = 'info') {
-    // Simple alert for now - can be enhanced with custom toast
-    console.log(`[${type.toUpperCase()}] ${message}`);
-    
-    // You can implement a custom toast notification system here
-    // For now, using console log
+    // Check if toast container exists, if not create one
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Create new toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type} fade-in`;
+
+    // Add icon based on type
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-message">${message}</div>
+    `;
+
+    // Append toast to container
+    container.appendChild(toast);
+
+    // Remove toast after 3.5 seconds
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+            if (toast.parentNode === container) {
+                container.removeChild(toast);
+            }
+        }, 300);
+    }, 3500);
 }
 
 /**
@@ -77,11 +108,11 @@ async function fetchAPI(endpoint, options = {}) {
                 ...options.headers
             }
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error(`API Error (${endpoint}):`, error);
@@ -94,21 +125,21 @@ async function fetchAPI(endpoint, options = {}) {
  */
 function base64ToAudioURL(base64Audio) {
     // Remove data URL prefix if present
-    const base64Data = base64Audio.includes(',') 
-        ? base64Audio.split(',')[1] 
+    const base64Data = base64Audio.includes(',')
+        ? base64Audio.split(',')[1]
         : base64Audio;
-    
+
     // Decode base64 to binary
     const binaryString = atob(base64Data);
     const bytes = new Uint8Array(binaryString.length);
-    
+
     for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
     }
-    
+
     // Create blob
     const blob = new Blob([bytes], { type: 'audio/wav' });
-    
+
     // Create object URL
     return URL.createObjectURL(blob);
 }
@@ -123,21 +154,21 @@ function playAudioBase64(base64Audio, audioElementId = 'audioPlayer') {
             console.error('Audio element not found');
             return;
         }
-        
+
         // Create audio URL
         const audioURL = base64ToAudioURL(base64Audio);
-        
+
         // Set source and play
         audioElement.src = audioURL;
         audioElement.play().catch(err => {
             console.error('Audio playback error:', err);
         });
-        
+
         // Clean up URL after playing
         audioElement.onended = () => {
             URL.revokeObjectURL(audioURL);
         };
-        
+
     } catch (error) {
         console.error('Error playing audio:', error);
     }
@@ -150,18 +181,18 @@ function updateStatus(statusText, statusType = 'idle') {
     const indicator = document.getElementById('statusIndicator');
     const textElement = document.getElementById('statusText');
     const dotElement = indicator?.querySelector('.status-dot');
-    
+
     if (!indicator || !textElement) return;
-    
+
     // Remove all status classes
     indicator.classList.remove('status-idle', 'status-decoding', 'status-success', 'status-error');
-    
+
     // Add appropriate class
     indicator.classList.add(`status-${statusType}`);
-    
+
     // Update text
     textElement.textContent = statusText;
-    
+
     // Update dot color
     if (dotElement) {
         const colors = {
@@ -187,65 +218,65 @@ class WebSocketManager {
         this.reconnectDelay = 2000;
         this.messageHandlers = {};
     }
-    
+
     connect() {
         return new Promise((resolve, reject) => {
             try {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsURL = `${protocol}//${window.location.host}${this.endpoint}`;
-                
+
                 console.log('Connecting to WebSocket:', wsURL);
-                
+
                 this.ws = new WebSocket(wsURL);
-                
+
                 this.ws.onopen = () => {
                     console.log('WebSocket connected');
                     this.connected = true;
                     this.reconnectAttempts = 0;
                     resolve();
                 };
-                
+
                 this.ws.onclose = () => {
                     console.log('WebSocket closed');
                     this.connected = false;
                     this.handleReconnect();
                 };
-                
+
                 this.ws.onerror = (error) => {
                     console.error('WebSocket error:', error);
                     reject(error);
                 };
-                
+
                 this.ws.onmessage = (event) => {
                     this.handleMessage(event);
                 };
-                
+
             } catch (error) {
                 reject(error);
             }
         });
     }
-    
+
     handleMessage(event) {
         try {
             const data = JSON.parse(event.data);
             const messageType = data.type;
-            
+
             if (this.messageHandlers[messageType]) {
                 this.messageHandlers[messageType](data);
             } else if (this.messageHandlers['*']) {
                 this.messageHandlers['*'](data);
             }
-            
+
         } catch (error) {
             console.error('Error handling message:', error);
         }
     }
-    
+
     on(messageType, handler) {
         this.messageHandlers[messageType] = handler;
     }
-    
+
     send(data) {
         if (this.connected && this.ws) {
             this.ws.send(JSON.stringify(data));
@@ -253,12 +284,12 @@ class WebSocketManager {
             console.error('WebSocket not connected');
         }
     }
-    
+
     handleReconnect() {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`Reconnecting... Attempt ${this.reconnectAttempts}`);
-            
+
             setTimeout(() => {
                 this.connect().catch(err => {
                     console.error('Reconnection failed:', err);
@@ -269,7 +300,7 @@ class WebSocketManager {
             updateStatus('Connection lost', 'error');
         }
     }
-    
+
     close() {
         if (this.ws) {
             this.connected = false;
