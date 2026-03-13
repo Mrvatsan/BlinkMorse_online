@@ -74,6 +74,20 @@
             <!-- Output card spans full right column for decoded text display -->
             <div class="normal-output-card">
                 <div class="output-panel">
+                    <div class="output-label">Select Output Language</div>
+                    <select id="languageSelect" class="form-input"
+                        style="max-width: 260px; margin-bottom: 10px;">
+                        <option value="en">English</option>
+                        <option value="ta">Tamil</option>
+                        <option value="hi">Hindi</option>
+                        <option value="te">Telugu</option>
+                        <option value="kn">Kannada</option>
+                        <option value="ml">Malayalam</option>
+                        <option value="bn">Bengali</option>
+                        <option value="mr">Marathi</option>
+                        <option value="gu">Gujarati</option>
+                    </select>
+
                     <div class="output-label">Current Letter</div>
                     <div id="currentLetter" class="output-text" style="font-size: 3rem;">--</div>
                     <!-- Displays the most recently decoded Morse letter -->
@@ -83,6 +97,17 @@
                     <div id="decodedText" class="output-text"
                         style="min-height: 120px; font-size: 2.2rem; line-height: 1.5; word-wrap: break-word; background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff; text-align: left;">
                         Waiting for blinks...</div>
+
+                    <div class="output-label mt-3">Translated Text</div>
+                    <div id="translatedText" class="output-text"
+                        style="min-height: 80px; font-size: 1.6rem; line-height: 1.5; word-wrap: break-word; background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.15); color: #f0f0f0; text-align: left;">
+                        --
+                    </div>
+
+                    <div class="output-label mt-3">Audio Output</div>
+                    <audio id="audioPlayer" controls style="width: 100%;">
+                        Your browser does not support the audio element.
+                    </audio>
                 </div>
             </div>
 

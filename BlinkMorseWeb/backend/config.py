@@ -1,8 +1,11 @@
-"""
-Configuration Settings for Blink Morse Web
-Loads settings from environment variables with sensible defaults
+"""Configuration Settings for Blink Morse Web.
+
+All filesystem paths are computed relative to the BlinkMorseWeb
+project root so the app works regardless of the current working
+directory used to start the server.
 """
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,9 +54,13 @@ PATIENT_COMMANDS = {
     "..": "BATHROOM"
 }
 
-# Static File Paths
-STATIC_AUDIO_DIR = "static/audio"
-FRONTEND_DIR = "frontend"
+# Project root: .../BlinkMorseWeb
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+# Static File Paths (absolute)
+STATIC_DIR = str(BASE_DIR / "static")
+STATIC_AUDIO_DIR = str(BASE_DIR / "static" / "audio")
+FRONTEND_DIR = str(BASE_DIR / "frontend")
 
 # Validation
 if not NVIDIA_API_KEY:

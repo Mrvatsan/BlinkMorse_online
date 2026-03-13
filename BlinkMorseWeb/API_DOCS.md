@@ -93,6 +93,83 @@ Blink Morse Web provides both REST API endpoints and WebSocket connections for r
 
 ---
 
+### Multilingual Text → Speech (IndicF5)
+
+**Endpoint**: `POST /api/generate-speech`
+
+**Description**: Translate English text into a selected Indian language and generate speech audio using the IndicF5 model. Returns translated text and a URL to the WAV file.
+
+**Supported output languages** (Normal & Patient modes):
+
+- English (default)
+- Tamil
+- Hindi
+- Telugu
+- Kannada
+- Malayalam
+- Bengali
+- Marathi
+- Gujarati
+
+**API language codes** (for `language` field):
+
+- `en` – English
+- `ta` – Tamil
+- `hi` – Hindi
+- `te` – Telugu
+- `kn` – Kannada
+- `ml` – Malayalam
+- `bn` – Bengali
+- `mr` – Marathi
+- `gu` – Gujarati
+
+**Request Body**:
+```json
+{
+  "text": "I need water",
+  "language": "ta"
+}
+```
+
+**Processing Pipeline**:
+
+1. Validate non-empty `text`.
+2. Translate from English into `language` using the translation service.
+3. Generate speech with IndicF5 using a language-specific prompt.
+4. Save audio to `static/audio/output.wav`.
+
+**Response** (Success):
+```json
+{
+  "success": true,
+  "translated_text": "...",  
+  "audio_url": "/static/audio/output.wav"
+}
+```
+
+**Response** (Client Error - unsupported language / empty text):
+```json
+{
+  "detail": "Unsupported language code: xx"
+}
+```
+
+**Response** (Upstream translation error):
+```json
+{
+  "detail": "Translation failed: <reason>"
+}
+```
+
+**Response** (TTS configuration / runtime error):
+```json
+{
+  "detail": "TTS generation failed: <reason>"
+}
+```
+
+---
+
 ### Get Morse Reference
 
 **Endpoint**: `GET /api/morse_reference`

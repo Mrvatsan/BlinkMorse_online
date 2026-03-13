@@ -17,7 +17,7 @@ let blinkDetector = null;
 let wsManager = null;
 let isDetecting = false;
 let blinkSymbolsBuffer = [];
-let lastAudioData = null; // Cache the latest speech for replay
+let lastAudioUrl = null; // Cache the latest speech URL for replay
 
 // Timing for letter/word detection
 let lastBlinkEndTime = null;
@@ -39,6 +39,8 @@ const blinkSymbols = document.getElementById('blinkSymbols');
 const morsePattern = document.getElementById('morsePattern');
 const currentWord = document.getElementById('currentWord');
 const fullMessage = document.getElementById('fullMessage');
+const translatedTextEl = document.getElementById('translatedText');
+const languageSelect = document.getElementById('languageSelect');
 
 /**
  * Handle blink detection from BlinkDetector module
@@ -122,21 +124,14 @@ async function decodeAndSpeak(pattern, isWord) {
             currentWord.textContent = decoded;
             updateStatus(`Decoded: ${decoded}`, 'success');
 
-            // Trigger TTS
-            const ttsResponse = await fetchAPI('/api/tts', {
-                method: 'POST',
-                body: JSON.stringify({ text: decoded })
-            });
+            // Trigger multilingual TTS pipeline
+            await generateAndPlaySpeech(decoded);
 
-            if (ttsResponse.success && ttsResponse.audio) {
-                lastAudioData = ttsResponse.audio;
-                playAudioBase64(lastAudioData);
-                fullMessage.textContent = (fullMessage.textContent === '--' ? '' : fullMessage.textContent) + decoded + ' ';
-                currentWord.textContent = '--';
+            fullMessage.textContent = (fullMessage.textContent === '--' ? '' : fullMessage.textContent) + decoded + ' ';
+            currentWord.textContent = '--';
 
-                if (isDetecting) {
-                    repeatBtn.disabled = false;
-                }
+            if (isDetecting) {
+                repeatBtn.disabled = !lastAudioUrl;
             }
         } else {
             console.warn(`[Decode] Pattern not recognized: ${pattern}`);
@@ -255,9 +250,14 @@ function setupEventListeners() {
     stopBtn.addEventListener('click', stopDetection);
     resetBtn.addEventListener('click', resetSession);
     repeatBtn.addEventListener('click', () => {
-        if (lastAudioData) {
-            playAudioBase64(lastAudioData);
-            updateStatus('Repeating speech', 'success');
+        if (lastAudioUrl) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer) {
+                audioPlayer.play().catch(err => {
+                    console.error('Audio playback error:', err);
+                });
+                updateStatus('Repeating speech', 'success');
+            }
         }
     });
 }
@@ -334,7 +334,7 @@ async function startDetection() {
         startBtn.disabled = true;
         stopBtn.disabled = false;
         resetBtn.disabled = false;
-        repeatBtn.disabled = !lastAudioData;
+        repeatBtn.disabled = !lastAudioUrl;
 
         updateStatus('Detecting blinks...', 'success');
         console.log('[Camera] Started successfully with FULL MediaPipe Face Mesh (468 landmarks)');
@@ -397,9 +397,54 @@ function resetSession() {
     blinkSymbolsBuffer = [];
     blinkSymbols.textContent = '...';
     currentMorsePattern = '';
+    if (translatedTextEl) {
+        translatedTextEl.textContent = '--';
+    }
 
     updateStatus('Session reset', 'idle');
     console.log('[Session] Reset');
+}
+
+/**
+ * Call backend multilingual pipeline and play audio for decoded text.
+ */
+async function generateAndPlaySpeech(text) {
+    const language = languageSelect ? languageSelect.value : 'en';
+
+    try {
+        updateStatus('Generating speech...', 'decoding');
+
+        const response = await fetchAPI('/api/generate-speech', {
+            method: 'POST',
+            body: JSON.stringify({
+                text: text,
+                language: language
+            })
+        });
+
+        if (response.success) {
+            if (translatedTextEl) {
+                translatedTextEl.textContent = response.translated_text || text;
+            }
+
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer && response.audio_url) {
+                audioPlayer.src = response.audio_url;
+                lastAudioUrl = response.audio_url;
+                audioPlayer.play().catch(err => {
+                    console.error('Audio playback error:', err);
+                });
+            }
+
+            updateStatus('Speech ready', 'success');
+        } else {
+            console.error('Multilingual TTS error:', response.error || 'Unknown error');
+            updateStatus('Speech generation failed', 'error');
+        }
+    } catch (error) {
+        console.error('[PatientMode] /api/generate-speech error:', error);
+        updateStatus('Speech generation failed', 'error');
+    }
 }
 
 // Initialize on page load

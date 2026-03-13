@@ -11,9 +11,13 @@ from typing import Optional
 from backend.config import STATIC_AUDIO_DIR
 
 try:
+    # Import errors or runtime issues inside kokoro (and its deps like spacy)
+    # should never crash the whole web app. Treat any failure here as
+    # "Kokoro unavailable" so the rest of the system can keep running.
     from kokoro import KPipeline
-except ImportError:
-    print("Warning: kokoro package not installed. Run 'pip install kokoro soundfile'")
+except Exception:
+    print("Warning: kokoro package not available or failed to initialize. "
+          "Run 'pip install kokoro soundfile' or check dependency versions.")
     KPipeline = None
 
 class KokoroTTS:

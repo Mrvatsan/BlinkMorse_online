@@ -14,11 +14,13 @@ import time
 import base64
 from typing import Optional
 
-from backend.config import STATIC_AUDIO_DIR, FRONTEND_DIR
+from backend.config import STATIC_DIR, STATIC_AUDIO_DIR, FRONTEND_DIR
 # from backend.services.blink_detection import BlinkDetector # Removed to avoid crash
 from backend.services.morse_decoder import MorseDecoder
 from backend.services.tts_kokoro import get_tts_service
 from backend.services.commands_manager import CommandsManager
+from translation.translator import translate_text
+from speech.tts_engine import generate_speech as indic_generate_speech
 # from backend.utils.helpers import decode_base64_to_frame, encode_frame_to_base64 # Removed to avoid crash
 
 # Initialize FastAPI app
@@ -38,7 +40,7 @@ app.add_middleware(
 )
 
 # Mount static files (audio output)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Pydantic models for request/response
 class DecodeRequest(BaseModel):
@@ -47,6 +49,11 @@ class DecodeRequest(BaseModel):
 
 class TTSRequest(BaseModel):
     text: str
+
+
+class GenerateSpeechRequest(BaseModel):
+    text: str
+    language: str
 
 class UserLoginRequest(BaseModel):
     name: str
@@ -182,6 +189,62 @@ async def text_to_speech(request: TTSRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/api/generate-speech")
+async def generate_speech_endpoint(request: GenerateSpeechRequest):
+    """Translate text and generate multilingual speech using IndicF5.
+
+    Request body
+    ------------
+    {
+        "text": "I need water",
+        "language": "ta"
+    }
+
+    Response body
+    -------------
+    {
+        "success": true,
+        "translated_text": "...",
+        "audio_url": "/static/audio/output.wav"
+    }
+    """
+    raw_text = (request.text or "").strip()
+    if not raw_text:
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+
+    # Step 1: translate
+    try:
+        translated = translate_text(raw_text, request.language)
+    except ValueError as ve:
+        # Validation issues (unsupported language, empty text, etc.)
+        raise HTTPException(status_code=400, detail=str(ve)) from ve
+    except RuntimeError as re:
+        # Upstream translation failure (e.g. network issue)
+        raise HTTPException(status_code=502, detail=str(re)) from re
+
+    # Step 2: TTS via IndicF5
+    try:
+        audio_path = indic_generate_speech(translated, request.language)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve)) from ve
+    except Exception as e:  # Catch all TTS errors
+        raise HTTPException(status_code=500, detail=f"TTS generation failed: {e}") from e
+
+    # Normalise path and expose as URL
+    norm_path = audio_path.replace("\\", "/")
+    if not norm_path.startswith("static/"):
+        # Assume file is inside STATIC_AUDIO_DIR when a bare filename is returned
+        norm_path = f"{STATIC_AUDIO_DIR}/{norm_path}" if "/" not in norm_path else norm_path
+
+    audio_url = "/" + norm_path.lstrip("/")
+
+    return JSONResponse({
+        "success": True,
+        "translated_text": translated,
+        "audio_url": audio_url,
+    })
+
 @app.get("/api/morse_reference")
 async def get_morse_reference():
     """
@@ -258,6 +321,16 @@ async def startup_event():
     except Exception as e:
         print(f"TTS initialization warning: {e}")
         print("   Text-to-speech may not be available")
+
+    # Initialize IndicF5 multilingual TTS (optional, best-effort)
+    try:
+        from speech.tts_engine import get_tts_engine
+
+        get_tts_engine()
+        print("IndicF5 multilingual TTS engine initialized")
+    except Exception as e:
+        print(f"IndicF5 initialization warning: {e}")
+        print("   Multilingual speech may not be available until configured")
     
     print("=" * 60)
     print("Server ready for connections")

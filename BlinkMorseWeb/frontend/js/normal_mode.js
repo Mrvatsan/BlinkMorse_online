@@ -28,6 +28,8 @@ const blinkSymbols = document.getElementById('blinkSymbols');
 const currentPattern = document.getElementById('currentPattern');
 const currentLetter = document.getElementById('currentLetter');
 const decodedText = document.getElementById('decodedText');
+const translatedTextEl = document.getElementById('translatedText');
+const languageSelect = document.getElementById('languageSelect');
 
 /**
  * Handle blink detected from BlinkDetector
@@ -52,19 +54,7 @@ function handleEARUpdate(avgEAR, leftEAR, rightEAR) {
 async function handleWordComplete(word) {
     console.log(`[NormalMode] Word complete, triggering TTS: ${word}`);
 
-    try {
-        const response = await fetchAPI('/api/tts', {
-            method: 'POST',
-            body: JSON.stringify({ text: word })
-        });
-
-        if (response.success && response.audio) {
-            playAudioBase64(response.audio);
-            updateStatus(`Speaking: ${word}`, 'success');
-        }
-    } catch (error) {
-        console.error('[NormalMode] TTS error:', error);
-    }
+    await generateAndPlaySpeech(word);
 }
 
 /**
@@ -233,22 +223,47 @@ async function speakCurrentText() {
         updateStatus('No text to speak', 'error');
         return;
     }
+    await generateAndPlaySpeech(text);
+}
+
+/**
+ * Call backend multilingual pipeline and play audio.
+ */
+async function generateAndPlaySpeech(text) {
+    const language = languageSelect ? languageSelect.value : 'en';
 
     try {
-        updateStatus('Speaking...', 'decoding');
+        updateStatus('Generating speech...', 'decoding');
 
-        const response = await fetchAPI('/api/tts', {
+        const response = await fetchAPI('/api/generate-speech', {
             method: 'POST',
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({
+                text: text,
+                language: language
+            })
         });
 
-        if (response.success && response.audio) {
-            playAudioBase64(response.audio);
-            updateStatus('Speaking complete', 'success');
+        if (response.success) {
+            if (translatedTextEl) {
+                translatedTextEl.textContent = response.translated_text || text;
+            }
+
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer && response.audio_url) {
+                audioPlayer.src = response.audio_url;
+                audioPlayer.play().catch(err => {
+                    console.error('Audio playback error:', err);
+                });
+            }
+
+            updateStatus('Speech ready', 'success');
+        } else {
+            console.error('Multilingual TTS error:', response.error || 'Unknown error');
+            updateStatus('Speech generation failed', 'error');
         }
     } catch (error) {
-        console.error('[NormalMode] TTS error:', error);
-        updateStatus('TTS failed', 'error');
+        console.error('[NormalMode] /api/generate-speech error:', error);
+        updateStatus('Speech generation failed', 'error');
     }
 }
 

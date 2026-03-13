@@ -9,9 +9,15 @@ opencv-python==4.9.0.80
 mediapipe==0.10.9
 numpy==1.24.3
 
-# NVIDIA Riva TTS
+# NVIDIA Riva TTS (existing)
 nvidia-riva-client==2.14.0
 grpcio==1.60.0
+
+# Multilingual Translation & IndicF5
+googletrans==4.0.0-rc1
+torch
+transformers
+soundfile
 
 # Audio Processing
 pydub==0.25.1
