@@ -14,6 +14,12 @@
 </head>
 
 <body class="landing-page">
+    <script>
+        const __bmTheme = localStorage.getItem('blinkMorseTheme');
+        if (__bmTheme === 'light' || __bmTheme === 'dark') {
+            document.body.setAttribute('data-theme', __bmTheme);
+        }
+    </script>
     <canvas id="bg-canvas"></canvas>
 
     <!-- Custom Cursor (injected by JS) -->
@@ -235,7 +241,8 @@
             window.location.href = '/mode_selection.html';
         });
     </script>
-    <script src="/js/landing_fx.js?v=7"></script>
+    <script src="/js/common.js?v=9"></script>
+    <script src="/js/landing_fx.js?v=8"></script>
 </body>
 
 </html>
