@@ -34,6 +34,7 @@
 
     /* Text Colors */
     --text-primary: #e0e0e0;
+    --text-light: rgba(255, 255, 255, 0.72);
     --text-secondary: rgba(255, 255, 255, 0.55);
     --text-muted: rgba(255, 255, 255, 0.35);
     --text-white: #ffffff;
@@ -55,6 +56,41 @@
     --transition-slow: 0.5s ease;
 }
 
+/* Light Theme Variables */
+[data-theme="light"] {
+    --primary-blue: #1d6fc7;
+    --primary-blue-dark: #0f5bad;
+    --primary-blue-light: #3c89da;
+
+    --accent-green: #1d9d57;
+    --accent-orange: #d88100;
+    --accent-purple: #6f4ec7;
+    --accent-red: #d93636;
+
+    --bg-body: #f2f6fb;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(255, 255, 255, 0.95);
+    --bg-input: rgba(255, 255, 255, 0.95);
+    --bg-panel: rgba(255, 255, 255, 0.78);
+    --border-subtle: rgba(13, 36, 62, 0.14);
+    --border-hover: rgba(29, 157, 87, 0.45);
+
+    --text-primary: #182634;
+    --text-light: rgba(24, 38, 52, 0.76);
+    --text-secondary: rgba(24, 38, 52, 0.68);
+    --text-muted: rgba(24, 38, 52, 0.45);
+    --text-white: #0f1c29;
+
+    --status-idle: #64707d;
+    --status-decoding: #e0a200;
+    --status-success: #1d9d57;
+    --status-error: #d93636;
+
+    --shadow-sm: 0 2px 8px rgba(9, 26, 43, 0.1);
+    --shadow-md: 0 8px 24px rgba(9, 26, 43, 0.13);
+    --shadow-lg: 0 14px 36px rgba(9, 26, 43, 0.18);
+}
+
 /* ============================================================================
    Global Styles
    ============================================================================ */
@@ -72,6 +108,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     cursor: none;
+    transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 * {
@@ -228,6 +265,52 @@ p {
 }
 
 /* ============================================================================
+   Theme Toggle
+   ============================================================================ */
+.theme-toggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1300;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-hover);
+}
+
+.theme-toggle:active {
+    transform: translateY(0);
+}
+
+.theme-toggle-label {
+    line-height: 1;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .theme-toggle {
+        width: 44px;
+        height: 44px;
+        top: 14px;
+        right: 14px;
+    }
+}
+
+/* ============================================================================
    Login Screen (now in landing.css, kept for fallback)
    ============================================================================ */
 .login-container {
@@ -359,16 +442,25 @@ p {
 }
 
 #videoFeed {
-    display: none;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 480px;
+    object-fit: cover;
+    background: #000;
+    border-radius: 16px;
 }
 
 #canvasOutput {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     border-radius: 16px;
-    background: #000;
-    min-height: 480px;
+    background: transparent;
+    min-height: 0;
+    pointer-events: none;
 }
 
 .video-overlay {
