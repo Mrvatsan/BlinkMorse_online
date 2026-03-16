@@ -6,6 +6,72 @@
 // API Base URL
 const API_BASE = window.location.origin;
 
+const THEME_STORAGE_KEY = 'blinkMorseTheme';
+const THEME_DARK = 'dark';
+const THEME_LIGHT = 'light';
+
+/**
+ * Apply theme mode to the document.
+ */
+function applyTheme(theme) {
+    const mode = theme === THEME_LIGHT ? THEME_LIGHT : THEME_DARK;
+    document.body.setAttribute('data-theme', mode);
+
+    const themeToggleLabel = document.querySelector('.theme-toggle-label');
+    if (themeToggleLabel) {
+        themeToggleLabel.textContent = mode === THEME_LIGHT ? '☀' : '🌙';
+    }
+}
+
+/**
+ * Get preferred theme from storage or system settings.
+ */
+function getPreferredTheme() {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === THEME_LIGHT || savedTheme === THEME_DARK) {
+        return savedTheme;
+    }
+
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    return prefersLight ? THEME_LIGHT : THEME_DARK;
+}
+
+/**
+ * Toggle between dark and light themes.
+ */
+function toggleTheme() {
+    const currentTheme = document.body.getAttribute('data-theme') || THEME_DARK;
+    const nextTheme = currentTheme === THEME_LIGHT ? THEME_DARK : THEME_LIGHT;
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    applyTheme(nextTheme);
+}
+
+/**
+ * Ensure theme toggle button exists on each page.
+ */
+function ensureThemeToggle() {
+    if (document.querySelector('.theme-toggle')) return;
+
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.className = 'theme-toggle';
+    toggleButton.id = 'themeToggle';
+    toggleButton.setAttribute('aria-label', 'Toggle theme');
+    toggleButton.innerHTML = '<span class="theme-toggle-label">🌙</span>';
+    toggleButton.addEventListener('click', toggleTheme);
+
+    document.body.appendChild(toggleButton);
+}
+
+/**
+ * Initialize theme system on page startup.
+ */
+function initThemeSystem() {
+    applyTheme(getPreferredTheme());
+    ensureThemeToggle();
+    applyTheme(document.body.getAttribute('data-theme'));
+}
+
 /**
  * Navigate back to mode selection menu
  */
@@ -308,6 +374,12 @@ class WebSocketManager {
             this.ws = null;
         }
     }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeSystem);
+} else {
+    initThemeSystem();
 }
 
 // Export for use in other scripts
