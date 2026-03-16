@@ -11,6 +11,7 @@ body.landing-page {
     cursor: none;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.landing-page * {
@@ -728,4 +729,118 @@ body.landing-page * {
         flex-direction: column;
         align-items: center;
     }
+}
+
+/* ============================================================================
+   Landing Light Theme Overrides
+   ============================================================================ */
+body.landing-page[data-theme="light"] {
+    background: #edf3fa;
+    color: #1b2d3f;
+}
+
+body.landing-page[data-theme="light"] .landing-nav.scrolled {
+    background: rgba(237, 243, 250, 0.92);
+    box-shadow: 0 4px 24px rgba(11, 35, 58, 0.12);
+}
+
+body.landing-page[data-theme="light"] .nav-logo,
+body.landing-page[data-theme="light"] .hero-title,
+body.landing-page[data-theme="light"] .section-title,
+body.landing-page[data-theme="light"] .about-card h3,
+body.landing-page[data-theme="light"] .feature-card h3,
+body.landing-page[data-theme="light"] .step-card h3 {
+    color: #102132;
+}
+
+body.landing-page[data-theme="light"] .nav-link {
+    color: rgba(16, 33, 50, 0.72);
+}
+
+body.landing-page[data-theme="light"] .nav-link:hover {
+    color: #0f2234;
+}
+
+body.landing-page[data-theme="light"] .hero-subtitle,
+body.landing-page[data-theme="light"] .section-subtitle,
+body.landing-page[data-theme="light"] .about-card p,
+body.landing-page[data-theme="light"] .feature-card p,
+body.landing-page[data-theme="light"] .step-card p,
+body.landing-page[data-theme="light"] .stat-label {
+    color: rgba(16, 33, 50, 0.68);
+}
+
+body.landing-page[data-theme="light"] .about-card,
+body.landing-page[data-theme="light"] .feature-card,
+body.landing-page[data-theme="light"] .step-card,
+body.landing-page[data-theme="light"] .login-card,
+body.landing-page[data-theme="light"] .tech-badge {
+    background: rgba(255, 255, 255, 0.84);
+    border-color: rgba(16, 33, 50, 0.14);
+    box-shadow: 0 10px 30px rgba(11, 35, 58, 0.1);
+}
+
+body.landing-page[data-theme="light"] .feature-card-large {
+    background: linear-gradient(135deg, rgba(29, 157, 87, 0.14), rgba(29, 111, 199, 0.12));
+}
+
+body.landing-page[data-theme="light"] .hero-badge {
+    background: rgba(29, 157, 87, 0.12);
+    border-color: rgba(29, 157, 87, 0.3);
+    color: #1d9d57;
+}
+
+body.landing-page[data-theme="light"] .about-section {
+    background: linear-gradient(180deg, transparent 0%, rgba(29, 111, 199, 0.07) 50%, transparent 100%);
+}
+
+body.landing-page[data-theme="light"] .how-section {
+    background: linear-gradient(180deg, transparent 0%, rgba(111, 78, 199, 0.07) 50%, transparent 100%);
+}
+
+body.landing-page[data-theme="light"] .btn-hero-secondary {
+    color: #102132;
+    border-color: rgba(16, 33, 50, 0.2);
+}
+
+body.landing-page[data-theme="light"] .btn-hero-secondary:hover {
+    background: rgba(16, 33, 50, 0.08);
+    border-color: rgba(16, 33, 50, 0.35);
+}
+
+body.landing-page[data-theme="light"] .form-label-landing {
+    color: rgba(16, 33, 50, 0.86);
+}
+
+body.landing-page[data-theme="light"] .form-input-landing {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(16, 33, 50, 0.22);
+    color: #102132;
+}
+
+body.landing-page[data-theme="light"] .form-input-landing::placeholder {
+    color: rgba(16, 33, 50, 0.45);
+}
+
+body.landing-page[data-theme="light"] .form-input-landing option {
+    background: #f8fbff;
+    color: #102132;
+}
+
+body.landing-page[data-theme="light"] .tech-strip,
+body.landing-page[data-theme="light"] .landing-footer {
+    color: rgba(16, 33, 50, 0.58);
+}
+
+body.landing-page[data-theme="light"] .landing-footer {
+    border-top-color: rgba(16, 33, 50, 0.12);
+}
+
+body.landing-page .theme-toggle {
+    top: 18px;
+    right: 18px;
+}
+
+body.landing-page[data-theme="light"] .theme-toggle {
+    background: rgba(255, 255, 255, 0.92);
 }
