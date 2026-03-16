@@ -7,7 +7,7 @@
     <title>Patient Mode - Blink Morse Web</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css?v=7">
+    <link rel="stylesheet" href="/css/styles.css?v=8">
 
     <!-- MediaPipe Face Mesh -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -18,11 +18,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 
     <!-- Modular Components -->
-    <script src="/js/faceMeshRenderer.js"></script>
-    <script src="/js/blinkDetector.js"></script>
+    <script src="/js/faceMeshRenderer.js?v=8"></script>
+    <script src="/js/blinkDetector.js?v=8"></script>
 </head>
 
 <body>
+    <script>
+        const __bmTheme = localStorage.getItem('blinkMorseTheme');
+        if (__bmTheme === 'light' || __bmTheme === 'dark') {
+            document.body.setAttribute('data-theme', __bmTheme);
+        }
+    </script>
     <div class="container fade-in">
         <div class="text-center mb-4">
             <h1>🏥 Patient Mode</h1>
@@ -43,7 +49,7 @@
 
                 <!-- Video Feed -->
                 <div class="video-container">
-                    <video id="videoFeed" autoplay playsinline style="display: none;"></video>
+                    <video id="videoFeed" autoplay playsinline muted></video>
                     <canvas id="canvasOutput"></canvas>
                     <div class="video-overlay">
                         <div class="ear-display">
@@ -164,10 +170,10 @@
         </div>
     </div>
 
-    <script src="/js/common.js"></script>
-    <script src="/js/patient_mode.js"></script>
-    <script src="/js/patient_commands_editor.js"></script>
-    <script src="/js/working_fx.js"></script>
+    <script src="/js/common.js?v=9"></script>
+    <script src="/js/patient_mode.js?v=8"></script>
+    <script src="/js/patient_commands_editor.js?v=8"></script>
+    <script src="/js/working_fx.js?v=8"></script>
 </body>
 
 </html>
