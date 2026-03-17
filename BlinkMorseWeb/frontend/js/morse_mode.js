@@ -146,6 +146,13 @@ async function startLearning() {
         });
         
         faceMesh.onResults(onFaceMeshResults);
+
+        // Set canvas size before camera frames start arriving
+        canvasElement.width = 1280;
+        canvasElement.height = 720;
+
+        // Start learning before camera starts streaming frames
+        isLearning = true;
         
         // Initialize camera
         camera = new Camera(videoElement, {
@@ -160,13 +167,8 @@ async function startLearning() {
         
         // Start camera
         await camera.start();
-        
-        // Set canvas size
-        canvasElement.width = 1280;
-        canvasElement.height = 720;
-        
+
         // Start learning session
-        isLearning = true;
         learnerController.startNewChallenge();
         
         // Update UI
