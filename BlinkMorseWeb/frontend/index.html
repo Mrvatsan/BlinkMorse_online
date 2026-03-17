@@ -8,7 +8,7 @@
     <meta name="description"
         content="An AI-powered assistive communication system that converts eye blinks into text and speech using Morse code patterns.">
     <link rel="stylesheet" href="/css/styles.css?v=7">
-    <link rel="stylesheet" href="/css/landing.css?v=7">
+    <link rel="stylesheet" href="/css/landing.css?v=9">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 </head>
@@ -199,7 +199,7 @@
             <div class="section-header reveal">
                 <div class="section-badge">Get Started</div>
                 <h2 class="section-title">Ready to Communicate?</h2>
-                <p class="section-subtitle">Enter your details below and choose a mode to begin.</p>
+                <p class="section-subtitle">Enter your details and password to begin.</p>
             </div>
             <div class="login-card reveal">
                 <form id="loginForm">
@@ -209,13 +209,9 @@
                             required autocomplete="name">
                     </div>
                     <div class="form-group-landing">
-                        <label for="userRole" class="form-label-landing">Your Role</label>
-                        <select id="userRole" class="form-input-landing" required>
-                            <option value="">Select your role</option>
-                            <option value="patient">Patient</option>
-                            <option value="caregiver">Caregiver</option>
-                            <option value="user">General User</option>
-                        </select>
+                        <label for="userPassword" class="form-label-landing">Password</label>
+                        <input type="password" id="userPassword" class="form-input-landing"
+                            placeholder="Enter your password" required autocomplete="current-password">
                     </div>
                     <button type="submit" class="btn-login-submit">
                         Continue to Dashboard →
@@ -235,14 +231,19 @@
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const userName = document.getElementById('userName').value;
-            const userRole = document.getElementById('userRole').value;
+            const userPassword = document.getElementById('userPassword').value;
+
+            if (!userPassword) {
+                return;
+            }
+
             sessionStorage.setItem('userName', userName);
-            sessionStorage.setItem('userRole', userRole);
+            sessionStorage.setItem('userRole', 'user');
             window.location.href = '/mode_selection.html';
         });
     </script>
     <script src="/js/common.js?v=9"></script>
-    <script src="/js/landing_fx.js?v=8"></script>
+    <script src="/js/landing_fx.js?v=10"></script>
 </body>
 
 </html>
