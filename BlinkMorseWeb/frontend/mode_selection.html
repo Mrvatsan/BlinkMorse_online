@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css?v=7">
-    <link rel="stylesheet" href="/css/landing.css?v=7">
+    <link rel="stylesheet" href="/css/landing.css?v=9">
 </head>
 
 <body class="landing-page">
@@ -76,13 +76,12 @@
     <script>
         // Display welcome message
         const userName = sessionStorage.getItem('userName');
-        const userRole = sessionStorage.getItem('userRole');
 
         if (!userName) {
             window.location.href = '/';
         } else {
             document.getElementById('welcomeMessage').textContent =
-                `Welcome, ${userName}! (${userRole})`;
+                `Welcome, ${userName}!`;
         }
 
         function selectMode(mode) {
@@ -101,7 +100,7 @@
         }
     </script>
     <script src="/js/common.js?v=9"></script>
-    <script src="/js/landing_fx.js?v=8"></script>
+    <script src="/js/landing_fx.js?v=10"></script>
 </body>
 
 </html>
