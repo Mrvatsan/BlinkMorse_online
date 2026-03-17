@@ -31,10 +31,8 @@ class FaceMeshRenderer {
         
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Draw camera feed first
-        this.ctx.drawImage(results.image, 0, 0, this.canvas.width, this.canvas.height);
-        
+        let renderState;
+
         if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
             const landmarks = results.multiFaceLandmarks[0];
             
@@ -65,18 +63,20 @@ class FaceMeshRenderer {
             this.ctx.fillStyle = '#00FF00';
             this.ctx.font = 'bold 18px Arial';
             this.ctx.fillText('✓ Face Mesh Active', 10, 30);
-            
-            return { detected: true, landmarks };
+
+            renderState = { detected: true, landmarks };
         } else {
             // No face detected
             this.ctx.fillStyle = '#FF0000';
             this.ctx.font = 'bold 20px Arial';
             this.ctx.fillText('✗ No Face Detected', 10, 30);
-            
-            return { detected: false, landmarks: null };
+
+            renderState = { detected: false, landmarks: null };
         }
         
         this.ctx.restore();
+
+        return renderState;
     }
     
     /**
