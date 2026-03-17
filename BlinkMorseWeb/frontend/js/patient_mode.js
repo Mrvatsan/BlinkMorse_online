@@ -302,6 +302,13 @@ async function startDetection() {
 
         faceMesh.onResults(onFaceMeshResults);
 
+        // Set canvas size before camera frames start arriving
+        canvasElement.width = 1280;
+        canvasElement.height = 720;
+
+        // Start detection before camera starts streaming frames
+        isDetecting = true;
+
         // Initialize camera
         camera = new Camera(videoElement, {
             onFrame: async () => {
@@ -315,13 +322,6 @@ async function startDetection() {
 
         // Start camera
         await camera.start();
-
-        // Set canvas size to match video
-        canvasElement.width = 1280;
-        canvasElement.height = 720;
-
-        // Start detection
-        isDetecting = true;
 
         // Clear previous data
         blinkSymbolsBuffer = [];
