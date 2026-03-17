@@ -61,11 +61,19 @@ function initCanvasBackground() {
 
     const ctx = canvas.getContext('2d');
     let width, height, particles;
-    const mouse = { x: null, y: null, radius: 150 };
+    const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+    const mouse = { x: null, y: null, radius: isDarkTheme ? 150 : 200 };
 
     document.addEventListener('mousemove', (e) => {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
+        const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+        mouse.radius = isDarkTheme ? 150 : 200;
+    });
+
+    document.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
     });
 
     function resize() {
@@ -79,14 +87,17 @@ function initCanvasBackground() {
         constructor() {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            this.size = Math.random() * 2 + 0.8;
+            const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+            this.size = isDarkTheme ? (Math.random() * 3 + 1.5) : (Math.random() * 4.5 + 2.0);
             this.baseX = this.x;
             this.baseY = this.y;
             this.density = (Math.random() * 25) + 2;
         }
 
         draw() {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+            const particleColor = isDarkTheme ? 'rgba(0, 210, 90, 0.70)' : 'rgba(0, 160, 70, 0.55)';
+            ctx.fillStyle = particleColor;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.closePath();
@@ -94,18 +105,28 @@ function initCanvasBackground() {
         }
 
         update() {
-            if (mouse.x == null || mouse.y == null) return;
+            const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+
+            if (mouse.x == null || mouse.y == null) {
+                if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 12;
+                if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 12;
+                return;
+            }
+
             let dx = mouse.x - this.x;
             let dy = mouse.y - this.y;
             let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < 0.001) return;
             let forceX = dx / distance;
             let forceY = dy / distance;
             let maxDist = mouse.radius;
-            let force = (maxDist - distance) / maxDist;
+            let force = Math.max(0, (maxDist - distance) / maxDist);
 
             if (distance < mouse.radius) {
-                this.x -= forceX * force * this.density;
-                this.y -= forceY * force * this.density;
+                // Keep light theme responsive but smoother to avoid flicker-like jumps.
+                const interactionStrength = isDarkTheme ? 1.0 : 0.45;
+                this.x -= forceX * force * this.density * interactionStrength;
+                this.y -= forceY * force * this.density * interactionStrength;
             } else {
                 if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 12;
                 if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 12;
@@ -115,13 +136,15 @@ function initCanvasBackground() {
 
     function init() {
         particles = [];
-        const count = (width * height) / 9000;
+        const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
+        const count = isDarkTheme ? (width * height) / 9000 : (width * height) / 7000;
         for (let i = 0; i < count; i++) {
             particles.push(new Particle());
         }
     }
 
     function connect() {
+        const isDarkTheme = !document.body.hasAttribute('data-theme') || document.body.getAttribute('data-theme') === 'dark';
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
                 let dx = particles[a].x - particles[b].x;
@@ -129,8 +152,11 @@ function initCanvasBackground() {
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 110) {
                     let opacity = 1 - (dist / 110);
-                    ctx.strokeStyle = `rgba(0, 200, 81, ${opacity * 0.18})`;
-                    ctx.lineWidth = 0.8;
+                    const lineColor = isDarkTheme 
+                        ? `rgba(0, 210, 90, ${opacity * 0.55})` 
+                        : `rgba(0, 180, 80, ${opacity * 0.35})`;
+                    ctx.strokeStyle = lineColor;
+                    ctx.lineWidth = isDarkTheme ? 0.8 : 1.5;
                     ctx.beginPath();
                     ctx.moveTo(particles[a].x, particles[a].y);
                     ctx.lineTo(particles[b].x, particles[b].y);
@@ -152,6 +178,12 @@ function initCanvasBackground() {
 
     init();
     animate();
+
+    // Listen for theme changes
+    const observer = new MutationObserver(() => {
+        // Theme changed, animation will automatically use new colors on next draw
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
 }
 
 // ===== SCROLL REVEAL =====
