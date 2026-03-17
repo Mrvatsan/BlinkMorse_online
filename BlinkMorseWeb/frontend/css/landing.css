@@ -663,6 +663,16 @@ body.landing-page * {
     background-color: rgba(0, 200, 81, 0.08);
 }
 
+body.landing-page[data-theme="light"] .custom-cursor {
+    mix-blend-mode: normal;
+    background-color: rgba(0, 155, 64, 0.9);
+    box-shadow: 0 0 10px rgba(0, 155, 64, 0.28);
+}
+
+body.landing-page[data-theme="light"] .custom-cursor-ring {
+    border-color: rgba(0, 155, 64, 0.35);
+}
+
 /* Background Canvas */
 #bg-canvas {
     position: fixed;
@@ -778,6 +788,11 @@ body.landing-page[data-theme="light"] .tech-badge {
     background: rgba(255, 255, 255, 0.84);
     border-color: rgba(16, 33, 50, 0.14);
     box-shadow: 0 10px 30px rgba(11, 35, 58, 0.1);
+}
+
+body.landing-page[data-theme="light"] .tech-badge {
+    color: #102132;
+    border-color: rgba(16, 33, 50, 0.22);
 }
 
 body.landing-page[data-theme="light"] .feature-card-large {
