@@ -70,6 +70,21 @@
 
                 <!-- User Input/Output Panel -->
                 <div class="learner-io">
+                    <div class="learner-io-section" style="margin-bottom: 0.75rem;">
+                        <div class="output-label">Output Language</div>
+                        <select id="languageSelect" class="form-input" style="max-width: 260px; margin: 0.4rem auto 0;">
+                            <option value="en">English</option>
+                            <option value="ta">Tamil</option>
+                            <option value="hi">Hindi</option>
+                            <option value="te">Telugu</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="bn">Bengali</option>
+                            <option value="mr">Marathi</option>
+                            <option value="gu">Gujarati</option>
+                        </select>
+                    </div>
+
                     <div class="learner-io-section">
                         <div class="output-label">Your Blink Input</div>
                         <div id="userInput" class="learner-user-input"></div>
@@ -78,6 +93,13 @@
                     <!-- Real-time feedback on blink pattern accuracy -->
                     <div id="score" class="learner-score">Score: 0/0 (0%)</div>
                     <!-- Running score tracker: correct/total (percentage) -->
+
+                    <div class="learner-io-section" style="margin-top: 0.9rem;">
+                        <div class="output-label">Audio Output</div>
+                        <audio id="audioPlayer" controls style="width: 100%; margin-top: 0.4rem;">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
                 </div>
             </div>
 
