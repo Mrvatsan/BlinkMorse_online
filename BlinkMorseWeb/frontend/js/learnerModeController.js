@@ -33,6 +33,7 @@ class LearnerModeController {
         // Callbacks
         this.onCorrect = options.onCorrect || null;
         this.onIncorrect = options.onIncorrect || null;
+        this.onChallengeStart = options.onChallengeStart || null;
     }
     
     /**
@@ -60,6 +61,10 @@ class LearnerModeController {
         if (this.feedbackEl) {
             this.feedbackEl.textContent = 'Blink the pattern!';
             this.feedbackEl.className = 'feedback-text';
+        }
+
+        if (this.onChallengeStart) {
+            this.onChallengeStart(this.currentLetter, this.currentPattern);
         }
         
         console.log(`[LearnerMode] New challenge: ${randomLetter} = ${this.currentPattern}`);
