@@ -221,6 +221,49 @@ Blink detection continues
 
 ---
 
+## 5. LEARNER MODE TTS ENABLED ✅
+
+**Problem**: Learner mode did not speak prompts or feedback, unlike other modes.
+
+**Solution**: Wired learner mode to the multilingual speech pipeline (`/api/generate-speech`).
+
+#### Learner TTS Behavior
+- ✅ Speaks each new challenge letter and Morse pattern
+- ✅ Speaks positive feedback on correct attempts
+- ✅ Speaks corrective feedback on incorrect attempts
+- ✅ Supports language selection (same language list as other modes)
+- ✅ Adds inline audio player for playback controls
+
+**Changes Made**:
+- ✅ Updated `frontend/js/learnerModeController.js`
+  - Added `onChallengeStart` callback
+  - Emits callback whenever a new challenge is generated
+
+- ✅ Updated `frontend/js/morse_mode.js`
+  - Added learner TTS generation/playback flow
+  - Hooks speech into challenge start, correct, and incorrect events
+
+- ✅ Updated `frontend/morse_mode.html`
+  - Added output language selector
+  - Added `audio` player for generated speech output
+
+---
+
+## 6. STARTUP DEPENDENCY ALIGNMENT ✅
+
+**Problem**: Server startup failed due to translation dependency mismatch (`googletrans` and `httpx`).
+
+**Solution**: Pinned compatible versions in project requirements.
+
+**Changes Made**:
+- ✅ Updated `requirements.txt`
+  - `googletrans==4.0.2`
+  - `httpx==0.28.1`
+
+This prevents `AttributeError` related to timeout exception handling during app import/startup.
+
+---
+
 ## 🚀 Ready for Use
 
 The system is now:
