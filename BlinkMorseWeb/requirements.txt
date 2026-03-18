@@ -14,7 +14,8 @@ nvidia-riva-client==2.14.0
 grpcio==1.60.0
 
 # Multilingual Translation & IndicF5
-googletrans==4.0.0-rc1
+googletrans==4.0.2
+httpx==0.28.1
 torch
 transformers
 soundfile
