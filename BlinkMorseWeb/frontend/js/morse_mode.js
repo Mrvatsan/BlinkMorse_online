@@ -29,6 +29,8 @@ const targetPatternEl = document.getElementById('targetPattern');
 const userInputEl = document.getElementById('userInput');
 const feedbackEl = document.getElementById('feedback');
 const scoreEl = document.getElementById('score');
+const languageSelect = document.getElementById('languageSelect');
+const audioPlayer = document.getElementById('audioPlayer');
 
 /**
  * Handle blink detected from BlinkDetector
@@ -65,6 +67,8 @@ function handleEARUpdate(avgEAR, leftEAR, rightEAR) {
  */
 function handleCorrect(letter, pattern) {
     console.log(`[Learner] ✅ Correct! ${letter} = ${pattern}`);
+    const spokenPattern = pattern.replace(/\./g, 'dot ').replace(/-/g, 'dash ').trim();
+    generateAndPlaySpeech(`Correct. ${letter}. Pattern: ${spokenPattern}`);
 }
 
 /**
@@ -72,6 +76,46 @@ function handleCorrect(letter, pattern) {
  */
 function handleIncorrect(userInput, correctPattern) {
     console.log(`[Learner] ❌ Wrong! Got: ${userInput}, Expected: ${correctPattern}`);
+    const spokenPattern = correctPattern.replace(/\./g, 'dot ').replace(/-/g, 'dash ').trim();
+    generateAndPlaySpeech(`Not correct. Try again. Correct pattern is ${spokenPattern}`);
+}
+
+/**
+ * Handle learner challenge start
+ */
+function handleChallengeStart(letter, pattern) {
+    const spokenPattern = pattern.replace(/\./g, 'dot ').replace(/-/g, 'dash ').trim();
+    generateAndPlaySpeech(`Practice letter ${letter}. Pattern: ${spokenPattern}`);
+}
+
+/**
+ * Call backend multilingual pipeline and play audio.
+ */
+async function generateAndPlaySpeech(text) {
+    const language = languageSelect ? languageSelect.value : 'en';
+
+    try {
+        const response = await fetchAPI('/api/generate-speech', {
+            method: 'POST',
+            body: JSON.stringify({
+                text: text,
+                language: language
+            })
+        });
+
+        if (response.success && audioPlayer && response.audio_url) {
+            audioPlayer.pause();
+            audioPlayer.src = response.audio_url;
+            audioPlayer.currentTime = 0;
+            audioPlayer.play().catch(err => {
+                console.error('Learner audio playback error:', err);
+            });
+        } else if (!response.success) {
+            console.error('Learner TTS error:', response.error || 'Unknown error');
+        }
+    } catch (error) {
+        console.error('[LearnerMode] /api/generate-speech error:', error);
+    }
 }
 
 /**
@@ -123,7 +167,8 @@ async function startLearning() {
             feedbackEl: feedbackEl,
             scoreEl: scoreEl,
             onCorrect: handleCorrect,
-            onIncorrect: handleIncorrect
+            onIncorrect: handleIncorrect,
+            onChallengeStart: handleChallengeStart
         });
         
         // Check MediaPipe availability
