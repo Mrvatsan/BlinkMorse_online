@@ -16,6 +16,10 @@ let learnerController = null;
 // State
 let isLearning = false;
 let letterSubmissionTimer = null;
+let lastFaceSeenAt = 0;
+let faceBlockedWarningShown = false;
+
+const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
 
 // DOM Elements
 const startBtn = document.getElementById('startBtn');
@@ -136,7 +140,29 @@ function onFaceMeshResults(results) {
     
     // Process landmarks for blink detection
     if (renderResult.detected && renderResult.landmarks) {
+        lastFaceSeenAt = Date.now();
+
+        if (faceBlockedWarningShown) {
+            faceBlockedWarningShown = false;
+            if (feedbackEl) {
+                feedbackEl.textContent = 'Face detected. Continue blinking!';
+                feedbackEl.style.color = 'var(--accent-green)';
+            }
+            showNotification('Face detected again. Learning resumed.', 'success');
+        }
+
         blinkDetector.processFaceLandmarks(renderResult.landmarks);
+        return;
+    }
+
+    const blockedDuration = Date.now() - lastFaceSeenAt;
+    if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
+        faceBlockedWarningShown = true;
+        if (feedbackEl) {
+            feedbackEl.textContent = 'Face/camera blocked. Please clear view and align your face.';
+            feedbackEl.style.color = '#ff7f7f';
+        }
+        showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
     }
 }
 
@@ -198,6 +224,8 @@ async function startLearning() {
 
         // Start learning before camera starts streaming frames
         isLearning = true;
+        lastFaceSeenAt = Date.now();
+        faceBlockedWarningShown = false;
         
         // Initialize camera
         camera = new Camera(videoElement, {
@@ -235,6 +263,7 @@ async function startLearning() {
  */
 function stopLearning() {
     isLearning = false;
+    faceBlockedWarningShown = false;
     
     // Clear timer
     if (letterSubmissionTimer) {
@@ -265,6 +294,9 @@ function stopLearning() {
     skipBtn.disabled = true;
     
     earValue.textContent = '--';
+    if (feedbackEl) {
+        feedbackEl.style.color = '';
+    }
     
     console.log('[Learner] Stopped');
 }

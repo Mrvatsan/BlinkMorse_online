@@ -15,6 +15,10 @@ let normalController = null;
 
 // State
 let isDetecting = false;
+let lastFaceSeenAt = 0;
+let faceBlockedWarningShown = false;
+
+const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
 
 // DOM Elements
 const startBtn = document.getElementById('startBtn');
@@ -75,7 +79,23 @@ function onFaceMeshResults(results) {
 
     // Process landmarks for blink detection
     if (renderResult.detected && renderResult.landmarks) {
+        lastFaceSeenAt = Date.now();
+
+        if (faceBlockedWarningShown) {
+            faceBlockedWarningShown = false;
+            updateStatus('Face detected - Detection resumed', 'success');
+            showNotification('Face detected again. Detection resumed.', 'success');
+        }
+
         blinkDetector.processFaceLandmarks(renderResult.landmarks);
+        return;
+    }
+
+    const blockedDuration = Date.now() - lastFaceSeenAt;
+    if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
+        faceBlockedWarningShown = true;
+        updateStatus('Face/camera blocked. Please clear view and align your face.', 'error');
+        showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
     }
 }
 
@@ -135,6 +155,8 @@ async function startDetection() {
 
         // Start detection before camera starts streaming frames
         isDetecting = true;
+        lastFaceSeenAt = Date.now();
+        faceBlockedWarningShown = false;
 
         // Initialize camera
         camera = new Camera(videoElement, {
@@ -171,6 +193,7 @@ async function startDetection() {
  */
 function stopDetection() {
     isDetecting = false;
+    faceBlockedWarningShown = false;
 
     // Stop camera
     if (camera) {
