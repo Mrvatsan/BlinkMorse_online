@@ -10,6 +10,41 @@ Blink Morse Web provides both REST API endpoints and WebSocket connections for r
 
 ## REST API Endpoints
 
+### User Login
+
+**Endpoint**: `POST /api/login`
+
+**Description**: First login for a username stores a password hash. Next logins must use the same password.
+
+**Request Body**:
+```json
+{
+  "name": "vatsan",
+  "role": "user",
+  "password": "secret123"
+}
+```
+
+**Response** (Success):
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "name": "vatsan",
+  "role": "user"
+}
+```
+
+**Response** (Wrong Password):
+```json
+{
+  "success": false,
+  "message": "Wrong password, please enter again"
+}
+```
+
+---
+
 ### Health Check
 
 **Endpoint**: `GET /health`
@@ -399,7 +434,13 @@ Blink Morse Web provides both REST API endpoints and WebSocket connections for r
 
 ## Authentication
 
-Currently, no authentication is required (local deployment).
+The landing page login now validates username/password via `POST /api/login`.
+Password hashes are stored in a local SQLite database for repeat login validation.
+
+Current scope:
+- Local username + password verification
+- No JWT session tokens
+- Session maintained in browser sessionStorage
 
 For production:
 - Implement JWT or OAuth
