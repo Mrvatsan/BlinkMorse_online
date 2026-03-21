@@ -10,6 +10,9 @@ from pydantic import BaseModel
 import asyncio
 import json
 import time
+import sqlite3
+import hashlib
+import os
 # import cv2  # Removed to avoid crash
 import base64
 from typing import Optional
@@ -58,9 +61,128 @@ class GenerateSpeechRequest(BaseModel):
 class UserLoginRequest(BaseModel):
     name: str
     role: str
+    password: str
 
 class CommandsUpdateRequest(BaseModel):
     commands: dict
+
+
+# ============================================================================
+# Login persistence (SQLite)
+# ============================================================================
+
+DB_DIR = os.path.join(os.path.dirname(__file__), "data")
+DB_PATH = os.path.join(DB_DIR, "auth.db")
+
+
+def init_auth_db():
+    """Create auth database and table if missing."""
+    os.makedirs(DB_DIR, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                role TEXT NOT NULL,
+                salt TEXT NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at REAL NOT NULL,
+                updated_at REAL NOT NULL
+            )
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def hash_password(password: str, salt_hex: str) -> str:
+    """Derive a secure hash from password + salt."""
+    return hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        bytes.fromhex(salt_hex),
+        120000,
+    ).hex()
+
+
+def normalize_name(name: str) -> str:
+    return (name or "").strip().lower()
+
+
+@app.post("/api/login")
+async def login_user(request: UserLoginRequest):
+    """Register first-time password or validate existing password."""
+    user_name = normalize_name(request.name)
+    role = (request.role or "user").strip() or "user"
+    password = (request.password or "").strip()
+
+    if not user_name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+
+    now = time.time()
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT name, role, salt, password_hash FROM users WHERE name = ?",
+            (user_name,),
+        )
+        row = cursor.fetchone()
+
+        # First login for this user: store password in DB
+        if row is None:
+            salt_hex = os.urandom(16).hex()
+            pass_hash = hash_password(password, salt_hex)
+            cursor.execute(
+                """
+                INSERT INTO users (name, role, salt, password_hash, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (user_name, role, salt_hex, pass_hash, now, now),
+            )
+            conn.commit()
+            return JSONResponse(
+                {
+                    "success": True,
+                    "message": "Login successful",
+                    "name": user_name,
+                    "role": role,
+                }
+            )
+
+        saved_name, saved_role, salt_hex, saved_hash = row
+        input_hash = hash_password(password, salt_hex)
+        if input_hash != saved_hash:
+            return JSONResponse(
+                {
+                    "success": False,
+                    "message": "Wrong password, please enter again",
+                },
+                status_code=401,
+            )
+
+        cursor.execute(
+            "UPDATE users SET role = ?, updated_at = ? WHERE name = ?",
+            (role, now, user_name),
+        )
+        conn.commit()
+
+        return JSONResponse(
+            {
+                "success": True,
+                "message": "Login successful",
+                "name": saved_name,
+                "role": role or saved_role,
+            }
+        )
+    finally:
+        conn.close()
 
 
 # ============================================================================
@@ -313,6 +435,9 @@ async def startup_event():
     print("\n" + "=" * 60)
     print("Blink Morse Web - Starting Up")
     print("=" * 60)
+
+    # Ensure auth DB exists for login password persistence
+    init_auth_db()
     
     # Initialize TTS service
     try:
