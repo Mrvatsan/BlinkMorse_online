@@ -40,6 +40,9 @@ env/
 *.log
 logs/
 
+# Local auth database
+backend/data/auth.db
+
 # Audio files
 static/audio/*.wav
 static/audio/*.mp3
