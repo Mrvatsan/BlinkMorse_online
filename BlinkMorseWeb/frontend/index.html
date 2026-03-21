@@ -216,6 +216,7 @@
                     <button type="submit" class="btn-login-submit">
                         Continue to Dashboard →
                     </button>
+                    <p id="loginError" style="display:none;color:#ff5d5d;margin-top:10px;font-weight:600;" aria-live="polite"></p>
                 </form>
             </div>
         </div>
@@ -228,18 +229,50 @@
 
     <script>
         // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const userName = document.getElementById('userName').value;
+            const userName = document.getElementById('userName').value.trim();
             const userPassword = document.getElementById('userPassword').value;
+            const errorElement = document.getElementById('loginError');
 
-            if (!userPassword) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+
+            if (!userName || !userPassword) {
+                errorElement.textContent = 'Please enter both name and password.';
+                errorElement.style.display = 'block';
                 return;
             }
 
-            sessionStorage.setItem('userName', userName);
-            sessionStorage.setItem('userRole', 'user');
-            window.location.href = '/mode_selection.html';
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: userName,
+                        role: 'user',
+                        password: userPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    errorElement.textContent = data.message || 'Wrong password, please enter again.';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+
+                sessionStorage.setItem('userName', data.name || userName);
+                sessionStorage.setItem('userRole', data.role || 'user');
+                window.location.href = '/mode_selection.html';
+            } catch (error) {
+                console.error('Login failed:', error);
+                errorElement.textContent = 'Login failed. Please try again.';
+                errorElement.style.display = 'block';
+            }
         });
     </script>
     <script src="/js/common.js?v=9"></script>
