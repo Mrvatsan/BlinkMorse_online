@@ -133,6 +133,7 @@ BlinkMorseWeb/
 
 - API keys stored in environment variables
 - No hardcoded secrets
+- Local login passwords are stored as salted hashes in SQLite
 - Secure WebSocket connections
 - Client-side camera permissions
 
@@ -141,6 +142,7 @@ BlinkMorseWeb/
 ### REST Endpoints
 - `GET /` - Serve frontend
 - `GET /health` - Health check
+- `POST /api/login` - Register/validate user password
 - `POST /api/decode` - Decode Morse to text
 - `POST /api/tts` - Convert text to speech
 
