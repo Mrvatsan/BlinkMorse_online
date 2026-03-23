@@ -6,9 +6,17 @@
 class BlinkDetector {
     constructor(options = {}) {
         // Thresholds
-        this.EAR_THRESHOLD = options.earThreshold || 0.21;
-        this.DOT_DURATION_MAX = options.dotDuration || 0.4;
-        this.DASH_DURATION_MIN = options.dashDuration || 0.4;
+        this.EAR_THRESHOLD = options.earThreshold;
+        this.DOT_DURATION_MAX = options.dotDuration;
+        this.DASH_DURATION_MIN = options.dashDuration;
+
+        if (
+            typeof this.EAR_THRESHOLD !== 'number' ||
+            typeof this.DOT_DURATION_MAX !== 'number' ||
+            typeof this.DASH_DURATION_MIN !== 'number'
+        ) {
+            throw new Error('BlinkDetector requires calibrated thresholds.');
+        }
         
         // Eye landmark indices
         this.LEFT_EYE_INDICES = [33, 160, 158, 133, 153, 144];
