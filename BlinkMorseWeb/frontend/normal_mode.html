@@ -21,6 +21,7 @@
     <script src="/js/morseMapStandard.js?v=8"></script>
     <script src="/js/faceMeshRenderer.js?v=8"></script>
     <script src="/js/blinkDetector.js?v=8"></script>
+    <script src="/js/calibrationManager.js?v=1"></script>
     <script src="/js/normalMorseDecoder.js?v=8"></script>
     <script src="/js/normalModeController.js?v=8"></script>
 </head>
@@ -156,6 +157,9 @@
                     🔊 Speak
                     <!-- Uses Web Speech API to speak decoded text aloud -->
                 </button>
+                <button id="recalibrateBtn" class="btn btn-info" disabled>
+                    🎯 Recalibrate
+                </button>
             </div>
 
             <!-- Timing Guide -->
@@ -163,11 +167,11 @@
                 <h3 style="color: white; margin-bottom: 0.75rem;">⏱️ Timing Guide</h3>
                 <div class="timing-item">
                     <span class="timing-label">Dot (.)</span>
-                    <span class="timing-value">Quick blink < 0.4s</span>
+                    <span class="timing-value">Short blink (adaptive)</span>
                 </div>
                 <div class="timing-item">
                     <span class="timing-label">Dash (-)</span>
-                    <span class="timing-value">Long blink ≥ 0.4s</span>
+                    <span class="timing-value">Long blink (adaptive)</span>
                 </div>
                 <div class="timing-item">
                     <span class="timing-label">Letter End</span>
