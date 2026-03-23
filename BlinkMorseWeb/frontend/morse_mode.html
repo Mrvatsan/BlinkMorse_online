@@ -20,6 +20,7 @@
     <!-- Modular Components -->
     <script src="/js/faceMeshRenderer.js?v=8"></script>
     <script src="/js/blinkDetector.js?v=8"></script>
+    <script src="/js/calibrationManager.js?v=1"></script>
     <script src="/js/learnerModeController.js?v=8"></script>
 </head>
 
@@ -121,6 +122,9 @@
                         ⏭ Skip Letter
                         <!-- Advances to next random letter in sequence -->
                     </button>
+                    <button id="recalibrateBtn" class="btn btn-info" disabled>
+                        🎯 Recalibrate
+                    </button>
                 </div>
 
                 <!-- Timing Guide -->
@@ -128,11 +132,11 @@
                     <h3 style="color: white; margin-bottom: 0.75rem;">⏱️ Blink Guide</h3>
                     <div class="timing-item">
                         <span class="timing-label">Dot (.)</span>
-                        <span class="timing-value">Quick blink < 0.4s</span>
+                        <span class="timing-value">Short blink (adaptive)</span>
                     </div>
                     <div class="timing-item">
                         <span class="timing-label">Dash (-)</span>
-                        <span class="timing-value">Long blink ≥ 0.4s</span>
+                        <span class="timing-value">Long blink (adaptive)</span>
                     </div>
                     <div class="timing-item">
                         <span class="timing-label">Submit</span>
