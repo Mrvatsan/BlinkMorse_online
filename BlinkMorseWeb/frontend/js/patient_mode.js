@@ -12,14 +12,18 @@ let faceMesh = null;
 let camera = null;
 let renderer = null;
 let blinkDetector = null;
+let calibrationSession = null;
+let calibrationConfig = null;
 
 // State management
 let wsManager = null;
 let isDetecting = false;
+let isSessionActive = false;
 let blinkSymbolsBuffer = [];
 let lastAudioUrl = null; // Cache the latest speech URL for replay
 let lastFaceSeenAt = 0;
 let faceBlockedWarningShown = false;
+const MODE_NAME = 'patient';
 
 const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
 
@@ -36,6 +40,7 @@ const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const resetBtn = document.getElementById('resetBtn');
 const repeatBtn = document.getElementById('repeatBtn');
+const recalibrateBtn = document.getElementById('recalibrateBtn');
 const videoElement = document.getElementById('videoFeed');
 const canvasElement = document.getElementById('canvasOutput');
 const earValue = document.getElementById('earValue');
@@ -155,7 +160,7 @@ async function decodeAndSpeak(pattern, isWord) {
  * MediaPipe Face Mesh callback
  */
 function onFaceMeshResults(results) {
-    if (!isDetecting) return;
+    if (!isSessionActive) return;
 
     // Render full 468-point face mesh
     const renderResult = renderer.render(results, {
@@ -175,6 +180,15 @@ function onFaceMeshResults(results) {
             faceBlockedWarningShown = false;
             updateStatus('Face detected - Detection resumed', 'success');
             showNotification('Face detected again. Detection resumed.', 'success');
+        }
+
+        if (calibrationSession && calibrationSession.isActive()) {
+            calibrationSession.handleLandmarks(renderResult.landmarks);
+            return;
+        }
+
+        if (!isDetecting || !blinkDetector) {
+            return;
         }
 
         blinkDetector.processFaceLandmarks(renderResult.landmarks);
@@ -268,6 +282,12 @@ function setupEventListeners() {
     startBtn.addEventListener('click', startDetection);
     stopBtn.addEventListener('click', stopDetection);
     resetBtn.addEventListener('click', resetSession);
+    if (recalibrateBtn) {
+        recalibrateBtn.addEventListener('click', async () => {
+            stopDetection();
+            await startDetection({ forceCalibration: true });
+        });
+    }
     repeatBtn.addEventListener('click', () => {
         if (lastAudioUrl) {
             const audioPlayer = document.getElementById('audioPlayer');
@@ -284,21 +304,14 @@ function setupEventListeners() {
 /**
  * Start blink detection with MediaPipe Face Mesh
  */
-async function startDetection() {
+async function startDetection(options = {}) {
+    const forceCalibration = Boolean(options.forceCalibration);
+
     try {
         updateStatus('Starting camera...', 'decoding');
 
         // Initialize renderer
         renderer = new FaceMeshRenderer(canvasElement);
-
-        // Initialize blink detector
-        blinkDetector = new BlinkDetector({
-            earThreshold: 0.21,
-            dotDuration: 0.4,
-            dashDuration: 0.4,
-            onBlinkDetected: handleBlinkDetected,
-            onEARUpdate: handleEARUpdate
-        });
 
         // Check if MediaPipe is loaded
         if (typeof FaceMesh === 'undefined') {
@@ -325,15 +338,21 @@ async function startDetection() {
         canvasElement.width = 1280;
         canvasElement.height = 720;
 
-        // Start detection before camera starts streaming frames
-        isDetecting = true;
+        // Keep stream active during calibration and detection.
+        isSessionActive = true;
+        isDetecting = false;
         lastFaceSeenAt = Date.now();
         faceBlockedWarningShown = false;
+
+        calibrationSession = BlinkCalibrationManager.createSession(MODE_NAME, {
+            onPrompt: (message) => updateStatus(message, 'decoding'),
+            onEARUpdate: handleEARUpdate
+        });
 
         // Initialize camera
         camera = new Camera(videoElement, {
             onFrame: async () => {
-                if (isDetecting && faceMesh) {
+                if (isSessionActive && faceMesh) {
                     await faceMesh.send({ image: videoElement });
                 }
             },
@@ -343,6 +362,16 @@ async function startDetection() {
 
         // Start camera
         await camera.start();
+
+        calibrationConfig = await calibrationSession.start(forceCalibration);
+        blinkDetector = new BlinkDetector({
+            earThreshold: calibrationConfig.earThreshold,
+            dotDuration: calibrationConfig.dotThreshold,
+            dashDuration: calibrationConfig.dotThreshold,
+            onBlinkDetected: handleBlinkDetected,
+            onEARUpdate: handleEARUpdate
+        });
+        isDetecting = true;
 
         // Clear previous data
         blinkSymbolsBuffer = [];
@@ -356,6 +385,9 @@ async function startDetection() {
         stopBtn.disabled = false;
         resetBtn.disabled = false;
         repeatBtn.disabled = !lastAudioUrl;
+        if (recalibrateBtn) {
+            recalibrateBtn.disabled = false;
+        }
 
         updateStatus('Detecting blinks...', 'success');
         console.log('[Camera] Started successfully with FULL MediaPipe Face Mesh (468 landmarks)');
@@ -371,6 +403,13 @@ async function startDetection() {
  * Stop blink detection
  */
 function stopDetection() {
+    if (calibrationSession && calibrationSession.isActive()) {
+        calibrationSession.cancel(new Error('Calibration interrupted'));
+    }
+
+    calibrationSession = null;
+    calibrationConfig = null;
+    isSessionActive = false;
     isDetecting = false;
     faceBlockedWarningShown = false;
 
@@ -400,6 +439,9 @@ function stopDetection() {
     stopBtn.disabled = true;
     resetBtn.disabled = true;
     repeatBtn.disabled = true;
+    if (recalibrateBtn) {
+        recalibrateBtn.disabled = true;
+    }
 
     earValue.textContent = '--';
     blinkSymbols.textContent = '...';
