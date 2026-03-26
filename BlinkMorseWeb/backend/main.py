@@ -345,21 +345,48 @@ async def generate_speech_endpoint(request: GenerateSpeechRequest):
         # Upstream translation failure (e.g. network issue)
         raise HTTPException(status_code=502, detail=str(re)) from re
 
-    # Step 2: TTS via IndicF5
+    # Step 2: TTS via IndicF5, with Kokoro fallback when IndicF5 is unavailable.
+    audio_path = None
+    indic_error = None
     try:
         audio_path = indic_generate_speech(translated, request.language)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve)) from ve
-    except Exception as e:  # Catch all TTS errors
-        raise HTTPException(status_code=500, detail=f"TTS generation failed: {e}") from e
+    except Exception as e:
+        indic_error = e
 
-    # Normalise path and expose as URL
-    norm_path = audio_path.replace("\\", "/")
-    if not norm_path.startswith("static/"):
-        # Assume file is inside STATIC_AUDIO_DIR when a bare filename is returned
-        norm_path = f"{STATIC_AUDIO_DIR}/{norm_path}" if "/" not in norm_path else norm_path
+    if not audio_path:
+        try:
+            tts = get_tts_service()
+            audio_bytes = tts.text_to_speech(translated)
+            if not audio_bytes:
+                raise RuntimeError("Kokoro did not return audio data")
 
-    audio_url = "/" + norm_path.lstrip("/")
+            fallback_filename = "output_fallback.wav"
+            fallback_path = os.path.join(STATIC_AUDIO_DIR, fallback_filename)
+            with open(fallback_path, "wb") as f:
+                f.write(audio_bytes)
+            audio_path = fallback_path
+        except Exception as fallback_error:
+            detail = f"TTS generation failed: {fallback_error}"
+            if indic_error is not None:
+                detail = f"TTS generation failed (IndicF5: {indic_error}; Kokoro: {fallback_error})"
+            raise HTTPException(status_code=500, detail=detail) from fallback_error
+
+    # Normalize backend file path to a browser URL under /static
+    norm_path = str(audio_path).replace("\\", "/")
+    static_root = os.path.abspath(STATIC_DIR).replace("\\", "/")
+    abs_audio_path = os.path.abspath(str(audio_path)).replace("\\", "/")
+
+    if abs_audio_path.startswith(static_root.rstrip("/") + "/"):
+        rel_path = abs_audio_path[len(static_root.rstrip("/")) + 1 :]
+        audio_url = f"/static/{rel_path}"
+    elif norm_path.startswith("/static/"):
+        audio_url = norm_path
+    elif norm_path.startswith("static/"):
+        audio_url = "/" + norm_path
+    else:
+        audio_url = f"/static/audio/{os.path.basename(norm_path)}"
 
     return JSONResponse({
         "success": True,
