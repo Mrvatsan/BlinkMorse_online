@@ -14,6 +14,10 @@ let blinkDetector = null;
 let normalController = null;
 let calibrationSession = null;
 let calibrationConfig = null;
+let performanceMonitor = null;
+
+// Debug toggle: set to false to disable all monitoring calculations and UI.
+const enablePerformanceMonitor = true;
 
 // State
 let isDetecting = false;
@@ -72,44 +76,54 @@ async function handleWordComplete(word) {
 function onFaceMeshResults(results) {
     if (!isSessionActive) return;
 
-    // Render full 468-point face mesh
-    const renderResult = renderer.render(results, {
-        showFullMesh: true,
-        showEyeLandmarks: true,
-        meshColor: '#C0C0C070',
-        meshLineWidth: 1,
-        eyeColor: '#00FF00',
-        eyePointSize: 3
-    });
+    const shouldTrackPerformance = enablePerformanceMonitor && performanceMonitor;
+    const frameStartTime = shouldTrackPerformance ? performance.now() : 0;
 
-    // Process landmarks for blink detection
-    if (renderResult.detected && renderResult.landmarks) {
-        lastFaceSeenAt = Date.now();
+    try {
 
-        if (faceBlockedWarningShown) {
-            faceBlockedWarningShown = false;
-            updateStatus('Face detected - Detection resumed', 'success');
-            showNotification('Face detected again. Detection resumed.', 'success');
-        }
+        // Render full 468-point face mesh
+        const renderResult = renderer.render(results, {
+            showFullMesh: true,
+            showEyeLandmarks: true,
+            meshColor: '#C0C0C070',
+            meshLineWidth: 1,
+            eyeColor: '#00FF00',
+            eyePointSize: 3
+        });
 
-        if (calibrationSession && calibrationSession.isActive()) {
-            calibrationSession.handleLandmarks(renderResult.landmarks);
+        // Process landmarks for blink detection
+        if (renderResult.detected && renderResult.landmarks) {
+            lastFaceSeenAt = Date.now();
+
+            if (faceBlockedWarningShown) {
+                faceBlockedWarningShown = false;
+                updateStatus('Face detected - Detection resumed', 'success');
+                showNotification('Face detected again. Detection resumed.', 'success');
+            }
+
+            if (calibrationSession && calibrationSession.isActive()) {
+                calibrationSession.handleLandmarks(renderResult.landmarks);
+                return;
+            }
+
+            if (!isDetecting || !blinkDetector) {
+                return;
+            }
+
+            blinkDetector.processFaceLandmarks(renderResult.landmarks);
             return;
         }
 
-        if (!isDetecting || !blinkDetector) {
-            return;
+        const blockedDuration = Date.now() - lastFaceSeenAt;
+        if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
+            faceBlockedWarningShown = true;
+            updateStatus('Face/camera blocked. Please clear view and align your face.', 'error');
+            showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
         }
-
-        blinkDetector.processFaceLandmarks(renderResult.landmarks);
-        return;
-    }
-
-    const blockedDuration = Date.now() - lastFaceSeenAt;
-    if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
-        faceBlockedWarningShown = true;
-        updateStatus('Face/camera blocked. Please clear view and align your face.', 'error');
-        showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
+    } finally {
+        if (shouldTrackPerformance) {
+            performanceMonitor.updateFrame(performance.now() - frameStartTime);
+        }
     }
 }
 
@@ -194,6 +208,20 @@ async function startDetection(options = {}) {
             onEARUpdate: handleEARUpdate
         });
 
+        if (enablePerformanceMonitor && window.PerformanceMonitor) {
+            if (!performanceMonitor) {
+                performanceMonitor = new window.PerformanceMonitor({
+                    enabled: true,
+                    updateIntervalMs: 500,
+                    container: videoElement ? videoElement.parentElement : null
+                });
+            } else {
+                performanceMonitor.setEnabled(true);
+                performanceMonitor.reset();
+                performanceMonitor.attach(videoElement ? videoElement.parentElement : null);
+            }
+        }
+
         isDetecting = true;
 
         // Update UI
@@ -244,6 +272,10 @@ function stopDetection() {
     // Clear canvas
     if (renderer) {
         renderer.clear();
+    }
+
+    if (performanceMonitor) {
+        performanceMonitor.setEnabled(false);
     }
 
     // Update UI
@@ -435,6 +467,12 @@ function init() {
     console.log('[NormalMode] Initializing...');
     setupEventListeners();
     initQuickReference();
+    if (enablePerformanceMonitor && window.PerformanceMonitor) {
+        performanceMonitor = new window.PerformanceMonitor({
+            enabled: false,
+            updateIntervalMs: 500
+        });
+    }
     updateStatus('Ready to start', 'idle');
 }
 
