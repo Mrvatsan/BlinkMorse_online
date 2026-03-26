@@ -14,6 +14,10 @@ let blinkDetector = null;
 let learnerController = null;
 let calibrationSession = null;
 let calibrationConfig = null;
+let performanceMonitor = null;
+
+// Debug toggle: set to false to disable all monitoring calculations and UI.
+const enablePerformanceMonitor = true;
 
 // State
 let isLearning = false;
@@ -132,51 +136,61 @@ async function generateAndPlaySpeech(text) {
  */
 function onFaceMeshResults(results) {
     if (!isSessionActive) return;
-    
-    // Render full 468-point face mesh
-    const renderResult = renderer.render(results, {
-        showFullMesh: true,
-        showEyeLandmarks: true,
-        meshColor: '#C0C0C070',
-        meshLineWidth: 1,
-        eyeColor: '#00FF00',
-        eyePointSize: 3
-    });
-    
-    // Process landmarks for blink detection
-    if (renderResult.detected && renderResult.landmarks) {
-        lastFaceSeenAt = Date.now();
 
-        if (faceBlockedWarningShown) {
-            faceBlockedWarningShown = false;
-            if (feedbackEl) {
-                feedbackEl.textContent = 'Face detected. Continue blinking!';
-                feedbackEl.style.color = 'var(--accent-green)';
+    const shouldTrackPerformance = enablePerformanceMonitor && performanceMonitor;
+    const frameStartTime = shouldTrackPerformance ? performance.now() : 0;
+
+    try {
+    
+        // Render full 468-point face mesh
+        const renderResult = renderer.render(results, {
+            showFullMesh: true,
+            showEyeLandmarks: true,
+            meshColor: '#C0C0C070',
+            meshLineWidth: 1,
+            eyeColor: '#00FF00',
+            eyePointSize: 3
+        });
+    
+        // Process landmarks for blink detection
+        if (renderResult.detected && renderResult.landmarks) {
+            lastFaceSeenAt = Date.now();
+
+            if (faceBlockedWarningShown) {
+                faceBlockedWarningShown = false;
+                if (feedbackEl) {
+                    feedbackEl.textContent = 'Face detected. Continue blinking!';
+                    feedbackEl.style.color = 'var(--accent-green)';
+                }
+                showNotification('Face detected again. Learning resumed.', 'success');
             }
-            showNotification('Face detected again. Learning resumed.', 'success');
-        }
 
-        if (calibrationSession && calibrationSession.isActive()) {
-            calibrationSession.handleLandmarks(renderResult.landmarks);
+            if (calibrationSession && calibrationSession.isActive()) {
+                calibrationSession.handleLandmarks(renderResult.landmarks);
+                return;
+            }
+
+            if (!isLearning || !blinkDetector) {
+                return;
+            }
+
+            blinkDetector.processFaceLandmarks(renderResult.landmarks);
             return;
         }
 
-        if (!isLearning || !blinkDetector) {
-            return;
+        const blockedDuration = Date.now() - lastFaceSeenAt;
+        if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
+            faceBlockedWarningShown = true;
+            if (feedbackEl) {
+                feedbackEl.textContent = 'Face/camera blocked. Please clear view and align your face.';
+                feedbackEl.style.color = '#ff7f7f';
+            }
+            showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
         }
-
-        blinkDetector.processFaceLandmarks(renderResult.landmarks);
-        return;
-    }
-
-    const blockedDuration = Date.now() - lastFaceSeenAt;
-    if (blockedDuration >= FACE_BLOCKED_WARNING_DELAY_MS && !faceBlockedWarningShown) {
-        faceBlockedWarningShown = true;
-        if (feedbackEl) {
-            feedbackEl.textContent = 'Face/camera blocked. Please clear view and align your face.';
-            feedbackEl.style.color = '#ff7f7f';
+    } finally {
+        if (shouldTrackPerformance) {
+            performanceMonitor.updateFrame(performance.now() - frameStartTime);
         }
-        showNotification('Face or camera appears blocked. Please clear the camera view.', 'warning');
     }
 }
 
@@ -267,6 +281,20 @@ async function startLearning(options = {}) {
             onBlinkDetected: handleBlinkDetected,
             onEARUpdate: handleEARUpdate
         });
+
+        if (enablePerformanceMonitor && window.PerformanceMonitor) {
+            if (!performanceMonitor) {
+                performanceMonitor = new window.PerformanceMonitor({
+                    enabled: true,
+                    updateIntervalMs: 500,
+                    container: videoElement ? videoElement.parentElement : null
+                });
+            } else {
+                performanceMonitor.setEnabled(true);
+                performanceMonitor.reset();
+                performanceMonitor.attach(videoElement ? videoElement.parentElement : null);
+            }
+        }
         isLearning = true;
 
         // Start learning session
@@ -325,6 +353,10 @@ function stopLearning() {
     if (renderer) {
         renderer.clear();
     }
+
+    if (performanceMonitor) {
+        performanceMonitor.setEnabled(false);
+    }
     
     // Update UI
     startBtn.disabled = false;
@@ -377,6 +409,12 @@ function setupEventListeners() {
  */
 function init() {
     console.log('[Learner] Initializing...');
+    if (enablePerformanceMonitor && window.PerformanceMonitor) {
+        performanceMonitor = new window.PerformanceMonitor({
+            enabled: false,
+            updateIntervalMs: 500
+        });
+    }
     setupEventListeners();
 }
 
