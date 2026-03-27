@@ -7,7 +7,7 @@
     <title>Morse Learning Mode - Blink Morse Web</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css?v=8">
+    <link rel="stylesheet" href="/css/styles.css?v=11">
 
     <!-- MediaPipe Face Mesh -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -18,11 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 
     <!-- Modular Components -->
-    <script src="/js/faceMeshRenderer.js?v=8"></script>
-    <script src="/js/blinkDetector.js?v=9"></script>
-    <script src="/js/calibrationManager.js?v=1"></script>
-    <script src="/js/performanceMonitor.js?v=1"></script>
-    <script src="/js/learnerModeController.js?v=8"></script>
+    <script src="/js/faceMeshRenderer.js?v=11"></script>
+    <script src="/js/blinkDetector.js?v=13"></script>
+    <script src="/js/calibrationManager.js?v=2"></script>
+    <script src="/js/performanceMonitor.js?v=2"></script>
+    <script src="/js/learnerModeController.js?v=10"></script>
 </head>
 
 <body>
@@ -84,6 +84,15 @@
                             <option value="bn">Bengali</option>
                             <option value="mr">Marathi</option>
                             <option value="gu">Gujarati</option>
+                        </select>
+                    </div>
+
+                    <div class="learner-io-section" style="margin-bottom: 0.75rem;">
+                        <div class="output-label">Voice</div>
+                        <select id="voiceSelect" class="form-input" style="max-width: 260px; margin: 0.4rem auto 0;">
+                            <option value="default">Default</option>
+                            <option value="male">Male</option>
+                            <option value="female" selected>Female</option>
                         </select>
                     </div>
 
@@ -168,9 +177,9 @@
         </div>
     </div>
 
-    <script src="/js/common.js?v=9"></script>
-    <script src="/js/morse_mode.js?v=9"></script>
-    <script src="/js/working_fx.js?v=8"></script>
+    <script src="/js/common.js?v=10"></script>
+    <script src="/js/morse_mode.js?v=11"></script>
+    <script src="/js/working_fx.js?v=10"></script>
 </body>
 
 </html>

@@ -28,6 +28,7 @@ let faceBlockedWarningShown = false;
 const MODE_NAME = 'morse';
 
 const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
+const CALIBRATION_PAGE = '/calibration.html';
 
 // DOM Elements
 const startBtn = document.getElementById('startBtn');
@@ -43,7 +44,49 @@ const userInputEl = document.getElementById('userInput');
 const feedbackEl = document.getElementById('feedback');
 const scoreEl = document.getElementById('score');
 const languageSelect = document.getElementById('languageSelect');
+let voiceSelect = document.getElementById('voiceSelect');
 const audioPlayer = document.getElementById('audioPlayer');
+const VOICE_STORAGE_KEY = 'blinkMorseVoiceProfile';
+
+function ensureVoiceSelector() {
+    if (voiceSelect) return voiceSelect;
+    if (!languageSelect) return null;
+
+    const section = languageSelect.closest('.learner-io-section');
+    const host = section ? section.parentElement : languageSelect.parentElement;
+    if (!host) return null;
+
+    const container = document.createElement('div');
+    container.className = 'learner-io-section';
+    container.style.marginBottom = '0.75rem';
+
+    const label = document.createElement('div');
+    label.className = 'output-label';
+    label.textContent = 'Voice';
+
+    const select = document.createElement('select');
+    select.id = 'voiceSelect';
+    select.className = 'form-input';
+    select.style.maxWidth = '260px';
+    select.style.margin = '0.4rem auto 0';
+    select.innerHTML = `
+        <option value="default">Default</option>
+        <option value="male">Male</option>
+        <option value="female" selected>Female</option>
+    `;
+
+    container.appendChild(label);
+    container.appendChild(select);
+
+    if (section) {
+        section.insertAdjacentElement('afterend', container);
+    } else {
+        host.prepend(container);
+    }
+
+    voiceSelect = select;
+    return voiceSelect;
+}
 
 /**
  * Handle blink detected from BlinkDetector
@@ -106,13 +149,15 @@ function handleChallengeStart(letter, pattern) {
  */
 async function generateAndPlaySpeech(text) {
     const language = languageSelect ? languageSelect.value : 'en';
+    const voice = voiceSelect ? voiceSelect.value : 'female';
 
     try {
         const response = await fetchAPI('/api/generate-speech', {
             method: 'POST',
             body: JSON.stringify({
                 text: text,
-                language: language
+                language: language,
+                voice: voice
             })
         });
 
@@ -278,6 +323,7 @@ async function startLearning(options = {}) {
             earThreshold: calibrationConfig.earThreshold,
             dotDuration: calibrationConfig.dotThreshold,
             dashDuration: calibrationConfig.dotThreshold,
+            minBlinkDuration: calibrationConfig.minBlinkDuration,
             onBlinkDetected: handleBlinkDetected,
             onEARUpdate: handleEARUpdate
         });
@@ -393,13 +439,15 @@ function skipLetter() {
  * Setup event listeners
  */
 function setupEventListeners() {
-    startBtn.addEventListener('click', startLearning);
+    startBtn.addEventListener('click', () => {
+        window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
+    });
     stopBtn.addEventListener('click', stopLearning);
     skipBtn.addEventListener('click', skipLetter);
     if (recalibrateBtn) {
-        recalibrateBtn.addEventListener('click', async () => {
+        recalibrateBtn.addEventListener('click', () => {
             stopLearning();
-            await startLearning({ forceCalibration: true });
+            window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
         });
     }
 }
@@ -415,7 +463,31 @@ function init() {
             updateIntervalMs: 500
         });
     }
+
+    ensureVoiceSelector();
+    if (voiceSelect) {
+        const savedVoice = localStorage.getItem(VOICE_STORAGE_KEY) || 'female';
+        if (["default", "male", "female"].includes(savedVoice)) {
+            voiceSelect.value = savedVoice;
+        } else {
+            voiceSelect.value = 'female';
+        }
+
+        voiceSelect.addEventListener('change', () => {
+            localStorage.setItem(VOICE_STORAGE_KEY, voiceSelect.value || 'female');
+        });
+    }
+
     setupEventListeners();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('autostart') === '1') {
+        params.delete('autostart');
+        const query = params.toString();
+        const cleanUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+        startLearning();
+    }
 }
 
 // Initialize on page load

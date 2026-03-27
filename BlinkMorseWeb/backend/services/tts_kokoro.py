@@ -31,6 +31,15 @@ class KokoroTTS:
         
         self.pipeline = None
         self._initialize_pipeline()
+
+        # Voice mapping for simple UI profiles.
+        # If a selected voice is unavailable, we gracefully fall back to female.
+        self.default_voice = 'af_heart'
+        self.voice_profiles = {
+            'default': self.default_voice,
+            'female': 'af_heart',
+            'male': 'am_adam'
+        }
     
     def _initialize_pipeline(self):
         """Initialize Kokoro Pipeline"""
@@ -46,7 +55,13 @@ class KokoroTTS:
             print(f"❌ Failed to initialize Kokoro pipeline: {e}")
             raise
 
-    def text_to_speech(self, text: str) -> Optional[bytes]:
+    def _resolve_voice(self, voice_profile: Optional[str]) -> str:
+        normalized = str(voice_profile or 'default').strip().lower()
+        if normalized not in self.voice_profiles:
+            return self.default_voice
+        return self.voice_profiles[normalized]
+
+    def text_to_speech(self, text: str, voice_profile: Optional[str] = None) -> Optional[bytes]:
         """
         Convert text to speech audio (WAV bytes)
         """
@@ -56,16 +71,25 @@ class KokoroTTS:
         try:
             text = text.strip()
             
-            # Generate speech generator
-            # We use the default voice 'af_heart' (american female). 
-            # You can change it depending on downloaded voices.
-            voice = 'af_heart' 
+            # Resolve requested voice profile from UI.
+            voice = self._resolve_voice(voice_profile)
             
             # Generate audio data
-            generator = self.pipeline(
-                text, voice=voice, 
-                speed=1.0, split_pattern=r'\n+'
-            )
+            try:
+                generator = self.pipeline(
+                    text,
+                    voice=voice,
+                    speed=1.0,
+                    split_pattern=r'\n+'
+                )
+            except Exception:
+                # Fallback to stable female voice if chosen voice is unavailable.
+                generator = self.pipeline(
+                    text,
+                    voice=self.default_voice,
+                    speed=1.0,
+                    split_pattern=r'\n+'
+                )
             
             # Collect generated audio chunks (audio is a numpy array)
             audio_chunks = []
@@ -96,12 +120,12 @@ class KokoroTTS:
             print(f"❌ Kokoro TTS Error: {e}")
             return None
             
-    def text_to_speech_base64(self, text: str) -> Optional[str]:
+    def text_to_speech_base64(self, text: str, voice_profile: Optional[str] = None) -> Optional[str]:
         """
         Convert text to speech and return as base64 string
         Useful for embedding in HTML/JSON
         """
-        audio_data = self.text_to_speech(text)
+        audio_data = self.text_to_speech(text, voice_profile=voice_profile)
         
         if not audio_data:
             return None

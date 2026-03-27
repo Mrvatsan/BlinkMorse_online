@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Sensitivity - Blink Morse Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=12">
+    <link rel="stylesheet" href="/css/landing.css?v=10">
+</head>
+
+<body class="landing-page">
+    <script>
+        const __bmTheme = localStorage.getItem('blinkMorseTheme');
+        if (__bmTheme === 'light' || __bmTheme === 'dark') {
+            document.body.setAttribute('data-theme', __bmTheme);
+        }
+    </script>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="page-wrapper fade-in">
+        <div class="container mode-selection" style="max-width: 980px;">
+            <h1>Select Patient Sensitivity</h1>
+            <p style="font-size: 1.12rem; color: var(--text-light); margin-top: 0.2rem;">
+                Choose how strict blink detection should be before starting Patient Mode.
+            </p>
+
+            <div class="mode-grid" style="margin-top: 1.7rem;">
+                <div class="mode-card" onclick="selectSensitivity('strict')">
+                    <div class="mode-icon">🛡️</div>
+                    <div class="mode-title">Strict</div>
+                    <div class="mode-description" style="text-align: left;">
+                        Best for noisy environments or frequent head movement.
+                        Ignores more uncertain inputs, so false blink detections are lowest.
+                    </div>
+                    <button class="btn btn-primary">Use Strict</button>
+                </div>
+
+                <div class="mode-card" onclick="selectSensitivity('medium')">
+                    <div class="mode-icon">⚖️</div>
+                    <div class="mode-title">Medium</div>
+                    <div class="mode-description" style="text-align: left;">
+                        Balanced mode for most users.
+                        Good mix of stability and responsiveness.
+                    </div>
+                    <button class="btn btn-success">Use Medium (Recommended)</button>
+                </div>
+
+                <div class="mode-card" onclick="selectSensitivity('loose')">
+                    <div class="mode-icon">⚡</div>
+                    <div class="mode-title">Loose</div>
+                    <div class="mode-description" style="text-align: left;">
+                        Most sensitive mode.
+                        Detects lighter or shorter blinks, but may allow more accidental triggers.
+                    </div>
+                    <button class="btn btn-warning">Use Loose</button>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button class="btn btn-warning" onclick="window.location.href='/mode_selection.html'">
+                    ← Back to Mode Selection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        checkAuth();
+
+        function selectSensitivity(level) {
+            const normalized = String(level || 'medium').toLowerCase();
+            const allowed = ['strict', 'medium', 'loose'];
+            const selected = allowed.includes(normalized) ? normalized : 'medium';
+
+            sessionStorage.setItem('blinkPatientSensitivity', selected);
+            localStorage.setItem('blinkPatientSensitivity', selected);
+            window.location.href = '/patient_mode.html';
+        }
+    </script>
+    <script src="/js/common.js?v=11"></script>
+    <script src="/js/landing_fx.js?v=11"></script>
+</body>
+
+</html>

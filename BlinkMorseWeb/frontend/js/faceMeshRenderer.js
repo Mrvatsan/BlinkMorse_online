@@ -28,9 +28,25 @@ class FaceMeshRenderer {
         } = options;
         
         this.ctx.save();
+
+        // Keep canvas buffer aligned to the incoming camera frame dimensions.
+        if (results && results.image) {
+            const srcW = results.image.videoWidth || results.image.width || this.canvas.width;
+            const srcH = results.image.videoHeight || results.image.height || this.canvas.height;
+
+            if (srcW && srcH && (this.canvas.width !== srcW || this.canvas.height !== srcH)) {
+                this.canvas.width = srcW;
+                this.canvas.height = srcH;
+            }
+        }
         
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw live camera frame as background so the feed always fills.
+        if (results && results.image) {
+            this.ctx.drawImage(results.image, 0, 0, this.canvas.width, this.canvas.height);
+        }
         let renderState;
 
         if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {

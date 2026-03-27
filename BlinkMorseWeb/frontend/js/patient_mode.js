@@ -25,15 +25,18 @@ let isDetecting = false;
 let isSessionActive = false;
 let blinkSymbolsBuffer = [];
 let lastAudioUrl = null; // Cache the latest speech URL for replay
+let patientCommands = {};
 let lastFaceSeenAt = 0;
 let faceBlockedWarningShown = false;
 const MODE_NAME = 'patient';
 
 const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
+const CALIBRATION_PAGE = '/calibration.html';
 
 // Timing for letter/word detection
 let lastBlinkEndTime = null;
 const LETTER_PAUSE = 1.0;
+const AMBIGUOUS_COMMAND_PAUSE = 1.8;
 const WORD_PAUSE = 2.5;
 
 // Current morse pattern
@@ -54,6 +57,38 @@ const currentWord = document.getElementById('currentWord');
 const fullMessage = document.getElementById('fullMessage');
 const translatedTextEl = document.getElementById('translatedText');
 const languageSelect = document.getElementById('languageSelect');
+let voiceSelect = document.getElementById('voiceSelect');
+const VOICE_STORAGE_KEY = 'blinkMorseVoiceProfile';
+
+function ensureVoiceSelector() {
+    if (voiceSelect) return voiceSelect;
+    if (!languageSelect) return null;
+
+    const label = document.createElement('div');
+    label.className = 'output-label';
+    label.textContent = 'Voice';
+
+    const select = document.createElement('select');
+    select.id = 'voiceSelect';
+    select.className = 'form-input';
+    select.style.maxWidth = '260px';
+    select.style.marginBottom = '10px';
+    select.innerHTML = `
+        <option value="default">Default</option>
+        <option value="male">Male</option>
+        <option value="female" selected>Female</option>
+    `;
+
+    languageSelect.insertAdjacentElement('afterend', label);
+    label.insertAdjacentElement('afterend', select);
+    voiceSelect = select;
+    return voiceSelect;
+}
+
+function getPatientSensitivity() {
+    // Sensitivity selection is temporarily disabled; keep patient mode on medium.
+    return 'medium';
+}
 
 /**
  * Handle blink detection from BlinkDetector module
@@ -107,6 +142,15 @@ function checkForPauses() {
     }
     // Letter pause
     else if (timeSinceLastBlink >= LETTER_PAUSE) {
+        const hasLongerMatch = Object.keys(patientCommands).some(
+            (pattern) => pattern.startsWith(currentMorsePattern) && pattern.length > currentMorsePattern.length
+        );
+
+        const requiredPause = hasLongerMatch ? AMBIGUOUS_COMMAND_PAUSE : LETTER_PAUSE;
+        if (timeSinceLastBlink < requiredPause) {
+            return;
+        }
+
         decodeAndSpeak(currentMorsePattern, false);
         currentMorsePattern = '';
         blinkSymbolsBuffer = [];
@@ -242,7 +286,30 @@ async function init() {
         // Setup event listeners
         setupEventListeners();
 
+        ensureVoiceSelector();
+        if (voiceSelect) {
+            const savedVoice = localStorage.getItem(VOICE_STORAGE_KEY) || 'female';
+            if (["default", "male", "female"].includes(savedVoice)) {
+                voiceSelect.value = savedVoice;
+            } else {
+                voiceSelect.value = 'female';
+            }
+
+            voiceSelect.addEventListener('change', () => {
+                localStorage.setItem(VOICE_STORAGE_KEY, voiceSelect.value || 'female');
+            });
+        }
+
         updateStatus('Ready to start', 'idle');
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('autostart') === '1') {
+            params.delete('autostart');
+            const query = params.toString();
+            const cleanUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
+            startDetection();
+        }
 
     } catch (error) {
         console.error('Initialization error:', error);
@@ -258,11 +325,21 @@ async function loadPatientCommands() {
         const response = await fetchAPI('/api/patient_commands');
 
         if (response.success) {
+            patientCommands = response.commands || {};
             displayPatientCommands(response.commands);
         }
 
     } catch (error) {
         console.error('Error loading commands:', error);
+        patientCommands = {
+            '.': 'YES',
+            '.-': 'NO',
+            '...': 'WATER',
+            '-.': 'PAIN',
+            '..--': 'EMERGENCY',
+            '---': 'FAMILY',
+            '..': 'BATHROOM'
+        };
         document.getElementById('commandsList').innerHTML =
             '<p class="text-danger">Failed to load commands</p>';
     }
@@ -300,13 +377,15 @@ function displayPatientCommands(commands) {
  * Setup event listeners
  */
 function setupEventListeners() {
-    startBtn.addEventListener('click', startDetection);
+    startBtn.addEventListener('click', () => {
+        window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
+    });
     stopBtn.addEventListener('click', stopDetection);
     resetBtn.addEventListener('click', resetSession);
     if (recalibrateBtn) {
-        recalibrateBtn.addEventListener('click', async () => {
+        recalibrateBtn.addEventListener('click', () => {
             stopDetection();
-            await startDetection({ forceCalibration: true });
+            window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
         });
     }
     repeatBtn.addEventListener('click', () => {
@@ -389,6 +468,8 @@ async function startDetection(options = {}) {
             earThreshold: calibrationConfig.earThreshold,
             dotDuration: calibrationConfig.dotThreshold,
             dashDuration: calibrationConfig.dotThreshold,
+            minBlinkDuration: calibrationConfig.minBlinkDuration,
+            sensitivityProfile: getPatientSensitivity(),
             onBlinkDetected: handleBlinkDetected,
             onEARUpdate: handleEARUpdate
         });
@@ -513,6 +594,7 @@ function resetSession() {
  */
 async function generateAndPlaySpeech(text) {
     const language = languageSelect ? languageSelect.value : 'en';
+    const voice = voiceSelect ? voiceSelect.value : 'female';
 
     try {
         updateStatus('Generating speech...', 'decoding');
@@ -521,7 +603,8 @@ async function generateAndPlaySpeech(text) {
             method: 'POST',
             body: JSON.stringify({
                 text: text,
-                language: language
+                language: language,
+                voice: voice
             })
         });
 

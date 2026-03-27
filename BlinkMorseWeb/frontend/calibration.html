@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibration - Blink Morse Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=11">
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
+    <script src="/js/faceMeshRenderer.js?v=11"></script>
+    <script src="/js/calibrationManager.js?v=1"></script>
+</head>
+
+<body>
+    <script>
+        const __bmTheme = localStorage.getItem('blinkMorseTheme');
+        if (__bmTheme === 'light' || __bmTheme === 'dark') {
+            document.body.setAttribute('data-theme', __bmTheme);
+        }
+    </script>
+
+    <div class="container fade-in">
+        <div class="text-center mb-4">
+            <h1>🎯 Blink Calibration</h1>
+            <p id="calibrationModeText" style="font-size: 1.15rem; color: var(--text-light);">
+                Preparing calibration...
+            </p>
+        </div>
+
+        <div class="normal-layout">
+            <div class="normal-camera-area">
+                <div class="status-panel">
+                    <h3>Status</h3>
+                    <div id="statusIndicator" class="status-indicator status-idle">
+                        <span class="status-dot" style="background: var(--status-idle);"></span>
+                        <span id="statusText">Ready to calibrate</span>
+                    </div>
+                </div>
+
+                <div class="video-container">
+                    <video id="videoFeed" autoplay playsinline muted></video>
+                    <canvas id="canvasOutput"></canvas>
+                    <div class="video-overlay">
+                        <div class="ear-display">
+                            EAR: <span id="earValue">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="normal-output-card">
+                <div class="output-panel">
+                    <div class="output-label">Calibration Progress</div>
+                    <div style="height: 12px; border-radius: 999px; background: rgba(255,255,255,0.14); overflow: hidden; margin-bottom: 1rem;">
+                        <div id="progressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #00C851, #37e48f); transition: width 0.25s ease;"></div>
+                    </div>
+
+                    <div class="output-label">Instruction</div>
+                    <div id="instructionText" class="output-text" style="min-height: 110px; text-align: left; font-size: 1.1rem;">
+                        Press Start Calibration to begin.
+                    </div>
+
+                    <div class="normal-controls mt-3">
+                        <button id="startCalibrationBtn" class="btn btn-success">▶ Start Calibration</button>
+                        <button id="cancelCalibrationBtn" class="btn btn-danger" disabled>⏹ Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-warning" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+    </div>
+
+    <script src="/js/common.js?v=9"></script>
+    <script src="/js/calibration_page.js?v=1"></script>
+    <script src="/js/working_fx.js?v=8"></script>
+</body>
+
+</html>

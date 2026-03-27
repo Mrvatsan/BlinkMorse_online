@@ -27,6 +27,7 @@ let faceBlockedWarningShown = false;
 const MODE_NAME = 'normal';
 
 const FACE_BLOCKED_WARNING_DELAY_MS = 2500;
+const CALIBRATION_PAGE = '/calibration.html';
 
 // DOM Elements
 const startBtn = document.getElementById('startBtn');
@@ -43,6 +44,33 @@ const currentLetter = document.getElementById('currentLetter');
 const decodedText = document.getElementById('decodedText');
 const translatedTextEl = document.getElementById('translatedText');
 const languageSelect = document.getElementById('languageSelect');
+let voiceSelect = document.getElementById('voiceSelect');
+const VOICE_STORAGE_KEY = 'blinkMorseVoiceProfile';
+
+function ensureVoiceSelector() {
+    if (voiceSelect) return voiceSelect;
+    if (!languageSelect) return null;
+
+    const label = document.createElement('div');
+    label.className = 'output-label';
+    label.textContent = 'Voice';
+
+    const select = document.createElement('select');
+    select.id = 'voiceSelect';
+    select.className = 'form-input';
+    select.style.maxWidth = '260px';
+    select.style.marginBottom = '10px';
+    select.innerHTML = `
+        <option value="default">Default</option>
+        <option value="male">Male</option>
+        <option value="female" selected>Female</option>
+    `;
+
+    languageSelect.insertAdjacentElement('afterend', label);
+    label.insertAdjacentElement('afterend', select);
+    voiceSelect = select;
+    return voiceSelect;
+}
 
 /**
  * Handle blink detected from BlinkDetector
@@ -204,6 +232,7 @@ async function startDetection(options = {}) {
             earThreshold: calibrationConfig.earThreshold,
             dotDuration: calibrationConfig.dotThreshold,
             dashDuration: calibrationConfig.dotThreshold,
+            minBlinkDuration: calibrationConfig.minBlinkDuration,
             onBlinkDetected: handleBlinkDetected,
             onEARUpdate: handleEARUpdate
         });
@@ -323,6 +352,7 @@ async function speakCurrentText() {
  */
 async function generateAndPlaySpeech(text) {
     const language = languageSelect ? languageSelect.value : 'en';
+    const voice = voiceSelect ? voiceSelect.value : 'female';
 
     try {
         updateStatus('Generating speech...', 'decoding');
@@ -331,7 +361,8 @@ async function generateAndPlaySpeech(text) {
             method: 'POST',
             body: JSON.stringify({
                 text: text,
-                language: language
+                language: language,
+                voice: voice
             })
         });
 
@@ -379,14 +410,16 @@ function updateStatus(text, status) {
  * Setup event listeners
  */
 function setupEventListeners() {
-    startBtn.addEventListener('click', startDetection);
+    startBtn.addEventListener('click', () => {
+        window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
+    });
     stopBtn.addEventListener('click', stopDetection);
     resetBtn.addEventListener('click', resetText);
     speakBtn.addEventListener('click', speakCurrentText);
     if (recalibrateBtn) {
-        recalibrateBtn.addEventListener('click', async () => {
+        recalibrateBtn.addEventListener('click', () => {
             stopDetection();
-            await startDetection({ forceCalibration: true });
+            window.location.href = `${CALIBRATION_PAGE}?mode=${MODE_NAME}&force=1`;
         });
     }
 }
@@ -465,6 +498,21 @@ function handlePatternUpdate(pattern) {
  */
 function init() {
     console.log('[NormalMode] Initializing...');
+
+    ensureVoiceSelector();
+    if (voiceSelect) {
+        const savedVoice = localStorage.getItem(VOICE_STORAGE_KEY) || 'female';
+        if (["default", "male", "female"].includes(savedVoice)) {
+            voiceSelect.value = savedVoice;
+        } else {
+            voiceSelect.value = 'female';
+        }
+
+        voiceSelect.addEventListener('change', () => {
+            localStorage.setItem(VOICE_STORAGE_KEY, voiceSelect.value || 'female');
+        });
+    }
+
     setupEventListeners();
     initQuickReference();
     if (enablePerformanceMonitor && window.PerformanceMonitor) {
@@ -474,6 +522,15 @@ function init() {
         });
     }
     updateStatus('Ready to start', 'idle');
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('autostart') === '1') {
+        params.delete('autostart');
+        const query = params.toString();
+        const cleanUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+        startDetection();
+    }
 }
 
 // Initialize on page load

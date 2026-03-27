@@ -57,6 +57,7 @@ class TTSRequest(BaseModel):
 class GenerateSpeechRequest(BaseModel):
     text: str
     language: str
+    voice: str = "female"
 
 class UserLoginRequest(BaseModel):
     name: str
@@ -204,6 +205,11 @@ async def serve_patient_mode():
     """Serve patient mode page"""
     return FileResponse(f"{FRONTEND_DIR}/patient_mode.html")
 
+@app.get("/patient_sensitivity.html")
+async def serve_patient_sensitivity():
+    """Serve patient sensitivity selection page"""
+    return FileResponse(f"{FRONTEND_DIR}/patient_sensitivity.html")
+
 @app.get("/morse_mode.html")
 async def serve_morse_mode():
     """Serve morse learning mode page"""
@@ -213,6 +219,11 @@ async def serve_morse_mode():
 async def serve_normal_mode():
     """Serve normal morse mode page"""
     return FileResponse(f"{FRONTEND_DIR}/normal_mode.html")
+
+@app.get("/calibration.html")
+async def serve_calibration_page():
+    """Serve dedicated calibration page"""
+    return FileResponse(f"{FRONTEND_DIR}/calibration.html")
 
 @app.get("/css/{filename}")
 async def serve_css(filename: str):
@@ -320,7 +331,8 @@ async def generate_speech_endpoint(request: GenerateSpeechRequest):
     ------------
     {
         "text": "I need water",
-        "language": "ta"
+        "language": "ta",
+        "voice": "female"
     }
 
     Response body
@@ -335,6 +347,10 @@ async def generate_speech_endpoint(request: GenerateSpeechRequest):
     if not raw_text:
         raise HTTPException(status_code=400, detail="Text cannot be empty")
 
+    voice_profile = (request.voice or "female").strip().lower()
+    if voice_profile not in {"default", "male", "female"}:
+        voice_profile = "female"
+
     # Step 1: translate
     try:
         translated = translate_text(raw_text, request.language)
@@ -345,20 +361,37 @@ async def generate_speech_endpoint(request: GenerateSpeechRequest):
         # Upstream translation failure (e.g. network issue)
         raise HTTPException(status_code=502, detail=str(re)) from re
 
-    # Step 2: TTS via IndicF5, with Kokoro fallback when IndicF5 is unavailable.
+    # Step 2: TTS generation.
+    # English uses Kokoro directly so selected voice profile is honored.
+    # Non-English tries IndicF5 first, then falls back to Kokoro.
     audio_path = None
     indic_error = None
-    try:
-        audio_path = indic_generate_speech(translated, request.language)
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve)) from ve
-    except Exception as e:
-        indic_error = e
+    if request.language == "en":
+        try:
+            tts = get_tts_service()
+            audio_bytes = tts.text_to_speech(translated, voice_profile=voice_profile)
+            if not audio_bytes:
+                raise RuntimeError("Kokoro did not return audio data")
+
+            fallback_filename = "output_fallback.wav"
+            fallback_path = os.path.join(STATIC_AUDIO_DIR, fallback_filename)
+            with open(fallback_path, "wb") as f:
+                f.write(audio_bytes)
+            audio_path = fallback_path
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"TTS generation failed: {e}") from e
+    else:
+        try:
+            audio_path = indic_generate_speech(translated, request.language)
+        except ValueError as ve:
+            raise HTTPException(status_code=400, detail=str(ve)) from ve
+        except Exception as e:
+            indic_error = e
 
     if not audio_path:
         try:
             tts = get_tts_service()
-            audio_bytes = tts.text_to_speech(translated)
+            audio_bytes = tts.text_to_speech(translated, voice_profile=voice_profile)
             if not audio_bytes:
                 raise RuntimeError("Kokoro did not return audio data")
 
@@ -392,6 +425,7 @@ async def generate_speech_endpoint(request: GenerateSpeechRequest):
         "success": True,
         "translated_text": translated,
         "audio_url": audio_url,
+        "voice": voice_profile,
     })
 
 @app.get("/api/morse_reference")
